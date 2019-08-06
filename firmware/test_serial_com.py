@@ -102,8 +102,8 @@ def talk(s, commands):
 if __name__ == "__main__":
 	test_strings = [
 	"<this should not work>",
-	"<SET_ACCEL,101,5000.0,0.0,5000.0>",
-	"<SET_SPEED,100,1000.0,0.0,0.0>",
+	"<SET_ACCEL,111,5000.0,5000.0,5000.0>",
+	"<SET_SPEED,111,1000.0,1000.0,1000.0>",
 	"<RUN,111,200,200,200>"
 	]
 
@@ -112,8 +112,8 @@ if __name__ == "__main__":
 	s = connect(port)
 
 	time.sleep(5) # wait for the arduino to initialize
-	
-	print(listen(s)) 
+
+	print(listen(s))
 
 	talk(s, test_strings)
 	s.close()
