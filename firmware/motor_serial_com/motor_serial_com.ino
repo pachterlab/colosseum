@@ -1,5 +1,5 @@
 #include <AccelStepper.h>
-// <RUN,12,1.1,2.4,0.0> test script
+// <RUN,110,1.1,2.4,0.0> test script
 // First we create the constants that we will use throughout our code
 #define MOTOR_STEPS 200
 #define MICROSTEPS 32
@@ -91,7 +91,34 @@ typedef struct {
 
 // All of the functions we would want to run
 void _run() {
-  Serial.print("_run()");
+  for (int i = 0; i < 3; i += 1) {
+    if (motors[i] == 1) {
+      steppers[i].move(args[i]);
+    }
+  }
+
+  int stepperStatus[3] = {0, 0, 0};
+  digitalWrite(EN, LOW);
+  while (array_sum(stepperStatus, 3) != array_sum(motors, 3)) {
+    // We iterate over the 3 possible steppers
+    for (int i = 0; i < 3; i += 1) {
+      // If this stepper is selected
+      if (motors[i] == 1) {
+        // Ask the stepper to move to position at constant speed.
+        if (stepperStatus[i] == 0 ) {
+          steppers[i].run();
+        }
+        // Check if it reached it's position
+        if (steppers[i].distanceToGo() == 0) {
+          // If yes then store that value in the stepperStatus array.
+          stepperStatus[i] = 1;
+        }
+      }
+    }
+    // getDataFromPC();
+  }
+
+  digitalWrite(EN, HIGH);
 }
 
 void _stop() {
@@ -137,6 +164,9 @@ const FunctionMap functions[6] {
 void setup() {
   Serial.begin(BAUD_RATE);
 
+  pinMode(EN, OUTPUT);
+  digitalWrite(EN, HIGH);
+  
   // flash LEDs so we know we are alive
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, HIGH);
@@ -150,8 +180,9 @@ void setup() {
     steppers[i].setSpeed(speeds[i]);
     steppers[i].setAcceleration(accels[i]);
     steppers[i].setCurrentPosition(0.0);
-  }
 
+  }
+  
   // tell the PC we are ready
   Serial.println("<Arduino is ready>");
 }
@@ -275,4 +306,16 @@ void execute() {
       }
     }
   }
+}
+
+
+int array_sum(int * array, int len) {
+  int arraySum;
+
+  arraySum = 0;
+  for (int index = 0; index < len; index++)
+  {
+    arraySum += array[index];
+  }
+  return arraySum;
 }
