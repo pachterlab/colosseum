@@ -23,7 +23,7 @@ The 3D printed components can be fabricated on any desktop fused filament fabric
 
 Fusion360 interactive view of colosseum fraction collector CAD.
 STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder.
-Bill of materials with prices and vendor links on a Google Spreadsheet.
+Bill of materials with prices and vendor links on a [Google Spreadsheet[(https://docs.google.com/spreadsheets/d/1Z83jh0TSUGW6AqqXLzAsNthaGQMtfY0oZQ2VZEOLgi0/edit?usp=sharing).
 Build Videos (Coming soon)
 
 ### Setting up the Arduino
