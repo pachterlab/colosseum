@@ -43,7 +43,7 @@ int stp_pins[3] = {X_STP, Y_STP, Z_STP};
 
 
 // AccelStepper is the class we use to run all of the motors in a parallel fashion
-// Documentation can be found here: http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html
+// Documentation can be found here: http://www.airspayce.com/mikem/arduino/AccelStepper/
 AccelStepper stepper1(AccelStepper::DRIVER, X_STP, X_DIR);
 AccelStepper stepper2(AccelStepper::DRIVER, Y_STP, Y_DIR);
 AccelStepper stepper3(AccelStepper::DRIVER, Z_STP, Z_DIR);
@@ -77,6 +77,8 @@ float arg_m2 = 0.0;
 float arg_m3 = 0.0;
 float args[3] = {arg_m1, arg_m2, arg_m3};
 
+float remainder[3] = {0.0, 0.0, 0.0};
+
 unsigned long curMillis;
 
 
@@ -84,10 +86,21 @@ typedef void (* FreeFunction )(); // this is a pointer to a function
 
 // Setting up dictionary for easy command execution
 typedef struct {
-  uint8_t mode_idx;
+  int mode_idx;
   char* mode;
   FreeFunction function; // now in our FunctionMap type, we can reference a function by its name
 } FunctionMap;
+
+int array_sum(int * array, int len) {
+  int arraySum;
+
+  arraySum = 0;
+  for (int index = 0; index < len; index++)
+  {
+    arraySum += array[index];
+  }
+  return arraySum;
+}
 
 // All of the functions we would want to run
 void _run() {
@@ -98,6 +111,8 @@ void _run() {
   }
 
   int stepperStatus[3] = {0, 0, 0};
+
+  // Enable the steppers when in motion
   digitalWrite(EN, LOW);
   while (array_sum(stepperStatus, 3) != array_sum(motors, 3)) {
     // We iterate over the 3 possible steppers
@@ -115,9 +130,13 @@ void _run() {
         }
       }
     }
-    // getDataFromPC();
+    getDataFromPC();
+    if (newDataFromPC) {
+      replyToPC(); 
+      break;
+    }
   }
-
+  // Disable the steppers when not in motion
   digitalWrite(EN, HIGH);
 }
 
@@ -127,18 +146,28 @@ void _stop() {
   }
 }
 
-void _resume() {
-  Serial.print("_resume()");
+void _pause() {
+  for (int i = 0; i < 3; i += 1) {
+    remainder[i] = steppers[i].distanceToGo();
+  }
+
+  _stop();
 }
 
-void _pause() {
-  Serial.print("_pause()");
+void _resume() {
+  for (int i = 0; i < 3; i += 1) {
+    args[i] = remainder[i];
+  }
+  _run();
 }
+
 
 void _set_speed() {
   for (int i = 0; i < 3; i += 1) {
     if (motors[i] == 1) {
+      steppers[i].setCurrentPosition(0.0);
       steppers[i].setMaxSpeed(args[i]);
+      steppers[i].setSpeed(args[i]);
     }
   }
 }
@@ -151,7 +180,8 @@ void _set_accel() {
   }
 }
 
-const FunctionMap functions[6] {
+const int function_count = 6;
+const FunctionMap functions[function_count] {
   {0, "RUN", _run},
   {1, "STOP", _stop},
   {2, "RESUME", _resume},
@@ -166,7 +196,7 @@ void setup() {
 
   pinMode(EN, OUTPUT);
   digitalWrite(EN, HIGH);
-  
+
   // flash LEDs so we know we are alive
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, HIGH);
@@ -182,7 +212,7 @@ void setup() {
     steppers[i].setCurrentPosition(0.0);
 
   }
-  
+
   // tell the PC we are ready
   Serial.println("<Arduino is ready>");
 }
@@ -277,6 +307,7 @@ void parseData() {
 
 void replyToPC() {
   if (newDataFromPC) {
+
     newDataFromPC = false;
     Serial.print("<");
     Serial.print(mode);
@@ -297,25 +328,11 @@ void replyToPC() {
 void execute() {
   if (executeCommand) {
     executeCommand = false;
-    for (uint8_t i = 0; i < sizeof(functions) / sizeof(FunctionMap); i += 1) {
+    for (int i = 0; i < function_count; i++) {
       if (strcmp(mode, functions[i].mode) == 0) {
-        return (functions[i].function)();
-      }
-      else {
-        return;
+        return (functions[i].function)(); // this just executes one function but it needs to iterate over all of them
       }
     }
+    return;
   }
-}
-
-
-int array_sum(int * array, int len) {
-  int arraySum;
-
-  arraySum = 0;
-  for (int index = 0; index < len; index++)
-  {
-    arraySum += array[index];
-  }
-  return arraySum;
 }
