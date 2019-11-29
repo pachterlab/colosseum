@@ -29,7 +29,7 @@ Build Videos (Coming soon)
 ### Setting up the Arduino
 We use the Arduino CNC shield to allow for up to three fraction collectors to be controlled from a computer.
 
-The software is configured to run the stepper motors with 200 steps per revolution at 1/32 microstepping, which translates to 6400 steps per rotation. To configure this, it is necessary to add 3 jumpers between the M0, M1 and M2 pins of the Arduino CNC shield. More information about microstepping can be found in the product page for the DRV8825 Stepper Motor Driver, which is used by the CNC shield. See the build videos for more detail. (*)
+The software is configured to run the stepper motors with 200 steps per revolution at 1/4 microstepping, which translates to 800 steps per rotation. To configure this, it is necessary to add a jumper between the M1 pin of the Arduino CNC shield. More information about microstepping can be found in the product page for the DRV8825 Stepper Motor Driver, which is used by the CNC shield. 
 
 The Arduino should be flashed with the arduino_serialCOM_v0.1.ino sketch, available in the SOFTWARE/ folder. (*)
 
@@ -40,16 +40,18 @@ The fraction collector is driven by an Arduino board that interprets commands se
 ### Installing software
 The Python scripts are available in the SOFTWARE/ folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
-The software you will need to run on your computer in order to control the Arduino is the colosseum_main.py script located in the SOFTWARE/ folder. (Add info about UI***)
+The software you will need to run on your computer in order to control the Arduino is the colosseum_main.py script located in the SOFTWARE/ folder. To start up the UI, open up the terminal inside the folder with all of the .py and .ui files, and type:
 
-You have the option of either (1) running from the source code in Python or (2) choosing the appropriate binary file below for your operating system and executing it. Before you run the controller code, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
+python run.py
+
+Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
 
 ## Startup Checklist
 Before starting the Python controller, make sure
 <ul>
   <li> The Arduino has the firmware uploaded to it
   <li> The Arduino is connected via USB to the computer
-  <li> You have appropriately placed jumpers on the CNC Sheild to allow for microstepping and hardware enabling (discussed in build video).
+  <li> You have appropriately placed jumpers on the CNC Shield to allow for microstepping and hardware enabling (discussed in build video).
   <li> The CNC shield is powered, and that all motors are plugged in to the CNC shield
 </ul>
 
