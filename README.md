@@ -33,7 +33,7 @@ The software is configured to run the stepper motors with 200 steps per revoluti
 
 The Arduino should be flashed with the arduino_serialCOM_v0.1.ino sketch, available in the SOFTWARE/ folder. (*)
 
-Make sure to download and install the AccelStepper library. To install, unzip the zip file to the libraries sub-folder of your sketchbook, if you get stuck here is a how-to. (Install link****)
+Make sure to download and install the [AccelStepper library](http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html). To install, unzip the zip file to the libraries sub-folder of your sketchbook, if you get stuck here is a how-to.
 
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
 
