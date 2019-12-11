@@ -15,3 +15,14 @@ def make_row_dict(setting, value, unit):
         'value': value,
         'unit': unit,
     }
+
+def read_angles(path):
+    with open(path, 'r') as f:
+        return [
+            int(angle)
+            for angle in f.readlines()
+            if not angle.startswith('#') and not angle.isspace()
+        ]
+
+def make_commands(angles):
+    return [f'<RUN,111,{angle},{angle},{angle}>' for angle in angles]

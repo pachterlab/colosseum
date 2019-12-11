@@ -1,3 +1,4 @@
+import os
 import logging
 import sys
 
@@ -6,8 +7,9 @@ from PyQt5.QtCore import QEvent
 from PyQt5.QtWidgets import QErrorMessage, QMainWindow, QMessageBox
 
 from constants import SETTINGS_LINK, SETTING_TO_UNITS_MAPPING, frunit_to_uL_hr, timeunit_to_hr, volunit_to_uL, fracsize_to_uL
-from utils import is_float, make_row_dict
+from utils import is_float, make_row_dict, read_angles, make_commands
 from unit_conversion import vol_from_time, time_from_vol, get_numfrac, get_fracsize
+from serial_comm import populate_ports, connect, talk, listen
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -41,6 +43,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setup_buttons()
         self.setup_error_popup()
         self.show()
+        populate_ports()
 
     def setup_error_popup(self):
         self.error_popup = QMessageBox(self)
@@ -177,6 +180,28 @@ class MainWindow(QtWidgets.QMainWindow):
     def setup_buttons(self):
         self.run_button.clicked.connect(self.run_pressed)
 
+    def calculate_collection_time(self):
+        fr_dict = self.get_flowrate_text()
+        frvalue = float(fr_dict['value'])
+        frunit = fr_dict['unit']
+
+        # Convert flow rate to common units.
+        frvalue /= frunit_to_uL_hr[frunit]
+        # Find volume per fraction value and unit
+        for row in self.rows.values():
+            if row['setting'].currentText() == 'Volume per fraction':
+                value = float(row['value'].text())
+                unit = row['unit'].currentText()
+
+                # Convert volume per fraction to common units.
+                value *= fracsize_to_uL[unit]
+                # calculate collection time & return that.
+                return value/frvalue*3600
+
+
+        # If we get here, something went horribly wrong.
+        raise Exception('Failed to find "Volume per fraction" setting.')
+
     def run_pressed(self):
         logging.info('run button pressed')
         input1 = self.value1_line.text()
@@ -199,8 +224,35 @@ class MainWindow(QtWidgets.QMainWindow):
             self.show_error_popup(error_messsage, title='Input error')
             return
 
+        stoptime = self.calculate_collection_time()
+
+        angles = read_angles(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'HARDWARE', 'angles.txt')
+        )
+        commands = make_commands(angles)
+        setup_cmds = [
+        "<SET_ACCEL,111,2000.0,2000.0,2000.0>",
+        "<SET_SPEED,111,1000.0,1000.0,1000.0>",
+        ]
+        port = populate_ports()
+        print("\n[setup] Connecting to port: {}".format(port))
+        s = connect(port)
+        time.sleep(5) #wait for the arduino to initialize
+        print(listen(s))
+        print("\n[setup] Sending setup commands..")
+        talk(s, setup_cmds)
+        time.sleep(1)
+        print("\n[action] Sending run commands..")
+        for command in commands[:numfrac]:
+            talk(s, command)
+            time.sleep(stoptime)
+
     def pause_resume_pressed(self):
         pass
 
     def stop_pressed(self):
-        pass
+        print("\n[action] Sending stop commands..")
+        stop_cmd = "<STOP,111,0.0,0.0,0.0>"
+        talk(s, stop_cmd)
+        print("\n[action] Closing port..")
+        s.close()
