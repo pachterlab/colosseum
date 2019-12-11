@@ -2,10 +2,10 @@
 
 <p>A modular, highly customizable, open source fraction collector.</p>
 
-<p>This would be where the picture goes.</p>
+![The colosseum fraction collector](HARDWARE/colosseum_homeview.png)
 
 ## Tl;dr
-We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than XX hours. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
+We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
 
 ## What's included?
 <ul>
@@ -39,6 +39,8 @@ The fraction collector is driven by an Arduino board that interprets commands se
 
 ### Installing software
 The Python scripts are available in the SOFTWARE/ folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
+
+![Screenshot of the GUI](SOFTWARE/fc_ui.PNG)
 
 The software you will need to run on your computer in order to control the Arduino is the colosseum_main.py script located in the SOFTWARE/ folder. To start up the UI, open up the terminal inside the folder with all of the .py and .ui files, and type:
 
