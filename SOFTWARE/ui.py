@@ -74,6 +74,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flowunit_combo = self.findChild(QtWidgets.QComboBox, 'flowunit_combo')
         self.value1_line = self.findChild(QtWidgets.QLineEdit, 'value1_line')
         self.value2_line = self.findChild(QtWidgets.QLineEdit, 'value2_line')
+        self.value3_line = self.findChild(QtWidgets.QLineEdit, 'value3_line')
+        self.value4_line = self.findChild(QtWidgets.QLineEdit, 'value4_line')
 
     def setup_params_table(self):
         self.rows = {
@@ -232,7 +234,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         commands = make_commands(angles)
         setup_cmds = [
-        "<SET_ACCEL,111,2000.0,2000.0,2000.0>",
+        "<SET_ACCEL,111,1000.0,1000.0,1000.0>",
         "<SET_SPEED,111,1000.0,1000.0,1000.0>",
         ]
         port = populate_ports()
