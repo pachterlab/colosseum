@@ -250,7 +250,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         for row in self.rows.values():
             if row['setting'].currentText() == 'Number of fractions':
-                numfrac = int(float((row['value'].text()))
+                numfrac = int(float((row['value'].text())))
                 print(numfrac)
 
         for command in commands[:numfrac]:
