@@ -254,11 +254,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if row['setting'].currentText() == 'Number of fractions':
                 numfrac = int(float((row['value'].text())))
 
-        for command in commands[:numfrac]:
-            time.sleep(stoptime)
-            print(command)
-            talk(s, command)
-
+        #for command in commands[:(numfrac-1)]:
+            #time.sleep(stoptime)
+            #print(command)
+            #talk(s, command)
+        talk(s,"<RUN,111,84,84,84>")
 
     def pause_resume_pressed(self):
         pass
