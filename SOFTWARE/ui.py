@@ -149,10 +149,11 @@ class MainWindow(QtWidgets.QMainWindow):
             else: #row3 is volume
                 row4value = get_numfrac(flowrate, row2, row3)
         else:
+            fsunit = self.unit4_combo.currentText()
             if row1['setting'] == 'Total volume':#row1 is volume
-                row4value = get_fracsize(flowrate, row2, row1)
+                row4value = get_fracsize(flowrate, row2, row1, fsunit)
             else:
-                row4value = get_fracsize(flowrate, row2, row3)
+                row4value = get_fracsize(flowrate, row2, row3, fsunit)
 
         self.rows[4]['value'].setText(str(row4value))
 
