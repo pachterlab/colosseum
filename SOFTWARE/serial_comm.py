@@ -180,7 +180,7 @@ def talk(s, commands):
 
 
 		time.sleep(0.1)
-	    print("Send and receive complete")
+		print("Send and receive complete")
 
 
 def cmd_valid(cmd):
