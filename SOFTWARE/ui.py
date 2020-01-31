@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+import time
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import QEvent
