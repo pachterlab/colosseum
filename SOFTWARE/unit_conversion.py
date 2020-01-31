@@ -45,7 +45,7 @@ def get_numfrac(flowrate, row2, volrow):
     return numfrac
 
 # calculating volume per fraction from number of fractions
-def get_fracsize(flowrate, row2, volrow):
+def get_fracsize(flowrate, row2, volrow, fsunit):
     # get volume unit
     # convert into uL
     vol = float(volrow['value'])
@@ -55,7 +55,7 @@ def get_fracsize(flowrate, row2, volrow):
     fracsize = vol / numfrac
     # get frac size unit
     # multiply scalar
-    fsunit = row4['unit']
+    #fsunit = row4['unit']
     fracsize *= fracsize_to_uL[fsunit]
 
     return fracsize
