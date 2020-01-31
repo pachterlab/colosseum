@@ -257,6 +257,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for command in commands[:numfrac]:
             talk(s, command)
             time.sleep(stoptime)
+            break
 
     def pause_resume_pressed(self):
         pass
