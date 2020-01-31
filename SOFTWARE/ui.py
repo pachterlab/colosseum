@@ -248,7 +248,7 @@ class MainWindow(QtWidgets.QMainWindow):
         time.sleep(1)
         print("\n[action] Sending run commands..")
         print(stoptime)
-        #print(commands)
+        print(commands)
 
         for row in self.rows.values():
             if row['setting'].currentText() == 'Number of fractions':
