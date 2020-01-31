@@ -255,9 +255,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 numfrac = int(float((row['value'].text())))
 
         for command in commands[:numfrac]:
+            time.sleep(stoptime)
             print(command)
             talk(s, command)
-            time.sleep(stoptime)
+
 
     def pause_resume_pressed(self):
         pass
