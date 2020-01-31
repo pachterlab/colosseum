@@ -55,7 +55,6 @@ def get_fracsize(flowrate, row2, volrow):
     fracsize = vol / numfrac
     # get frac size unit
     # multiply scalar
-    fracsize = float(row2['value'])
     fsunit = row2['unit']
     fracsize *= fracsize_to_uL[fsunit]
 
