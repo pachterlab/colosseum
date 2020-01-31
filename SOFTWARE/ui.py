@@ -190,7 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
         frunit = fr_dict['unit']
 
         # Convert flow rate to common units.
-        frvalue /= frunit_to_uL_hr[frunit]
+        frvalue *= frunit_to_uL_hr[frunit]
         # Find volume per fraction value and unit
         for row in self.rows.values():
             if row['setting'].currentText() == 'Volume per fraction':
@@ -198,7 +198,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 unit = row['unit'].currentText()
 
                 # Convert volume per fraction to common units.
-                value /= fracsize_to_uL[unit]
+                value *= fracsize_to_uL[unit]
                 # calculate collection time & return that.
                 return value/frvalue*3600
 
