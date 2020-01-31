@@ -248,13 +248,14 @@ class MainWindow(QtWidgets.QMainWindow):
         time.sleep(1)
         print("\n[action] Sending run commands..")
         print(stoptime)
-        print(commands)
+        #print(commands)
 
         for row in self.rows.values():
             if row['setting'].currentText() == 'Number of fractions':
                 numfrac = int(float((row['value'].text())))
 
         for command in commands[:numfrac]:
+            print(command)
             talk(s, command)
             time.sleep(stoptime)
 
