@@ -58,7 +58,7 @@ def populate_ports():
 			result.append(port)
 		except (OSError, serial.SerialException):
 			pass
-	return result
+	return result[-1]
 
 def connect(port, baudrate=2000000):
 	"""Connects to the specified serial port
@@ -167,7 +167,7 @@ def talk(s, commands):
 			continue # returns to beginning of for loop and grabs next string
 		if waitingForReply == False:
 			write_to_serial(s, teststr)
-			# print("Sent from PC -- " + teststr) # Prints out what was sent to the Arduino
+			print("Sent from PC -- " + teststr) # Prints out what was sent to the Arduino
 			waitingForReply = True
 
 		if waitingForReply == True:
@@ -175,12 +175,12 @@ def talk(s, commands):
 				pass
 
 			dataRecvd = listen(s)
-			# print("Reply Received -- " + dataRecvd) # Prints out what was received by the Arduino
+			print("Reply Received -- " + dataRecvd) # Prints out what was received by the Arduino
 			waitingForReply = False
 
 
 		time.sleep(0.1)
-	# print("Send and receive complete")
+	    print("Send and receive complete")
 
 
 def cmd_valid(cmd):
