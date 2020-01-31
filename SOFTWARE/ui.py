@@ -198,7 +198,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 unit = row['unit'].currentText()
 
                 # Convert volume per fraction to common units.
-                value *= fracsize_to_uL[unit]
+                value /= fracsize_to_uL[unit]
                 # calculate collection time & return that.
                 return value/frvalue*3600
 
