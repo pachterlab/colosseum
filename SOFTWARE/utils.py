@@ -25,4 +25,4 @@ def read_angles(path):
         ]
 
 def make_commands(angles):
-    return [f'<RUN,111,{angle},{angle},{angle}>' for angle in angles]
+    return [f"<RUN,111,{angle},{angle},{angle}>" for angle in angles]
