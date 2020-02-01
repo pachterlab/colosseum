@@ -251,6 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #print(commands)
 
         for row in self.rows.values():
+            print(row)
             if row['setting'].currentText() == 'Number of fractions':
                 numfrac = int(float((row['value'].text())))
 
