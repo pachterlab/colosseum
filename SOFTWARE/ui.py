@@ -202,7 +202,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 # calculate collection time & return that.
                 return value/frvalue*3600
 
-
         # If we get here, something went horribly wrong.
         raise Exception('Failed to find "Volume per fraction" setting.')
 
@@ -261,8 +260,8 @@ class MainWindow(QtWidgets.QMainWindow):
         for command in commands[:(numfrac-1)]:
             time.sleep(stoptime)
             print(command)
-            talk(s, command)
-        talk(s,"<RUN,111,84,84,84>")
+            talk(s, [command])
+        talk(s, ["<RUN,111,84,84,84>"])
 
     def pause_resume_pressed(self):
         pass
@@ -270,6 +269,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def stop_pressed(self):
         print("\n[action] Sending stop commands..")
         stop_cmd = "<STOP,111,0.0,0.0,0.0>"
-        talk(s, stop_cmd)
+        talk(s, [stop_cmd])
         print("\n[action] Closing port..")
         s.close()
