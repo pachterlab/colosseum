@@ -2,12 +2,14 @@ import os
 import logging
 import sys
 import time
+import threading
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import QEvent
 from PyQt5.QtWidgets import QErrorMessage, QMainWindow, QMessageBox
 
-from constants import SETTINGS_LINK, SETTING_TO_UNITS_MAPPING, frunit_to_uL_hr, timeunit_to_hr, volunit_to_uL, fracsize_to_uL
+from colosseum import Colosseum
+from constants import SETTINGS_LINK, SETTING_TO_UNITS_MAPPING, FRUNIT_TO_UL_HR, TIMEUNIT_TO_HR, VOLUNIT_TO_UL, FRACSIZE_TO_UL
 from utils import is_float, make_row_dict, read_angles, make_commands
 from unit_conversion import vol_from_time, time_from_vol, get_numfrac, get_fracsize
 from serial_comm import populate_ports, connect, talk, listen
@@ -44,7 +46,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setup_buttons()
         self.setup_error_popup()
         self.show()
-        populate_ports()
+
+        # Initialize colosseum logic
+        self.initialize()
+
+    def initialize(self):
+        port = populate_ports()
+        self.colosseum = Colosseum(port)
+        self.monitor_thread = threading.Thread(
+            target=self.monitor, daemon=True
+        )
+        self.monitor_thread.start()
+
+    def monitor(self):
+        while True:
+            self.tube_number.display(self.colosseum.position)
+
+            # Do some stuff if the run is finished.
+            if self.colosseum.done:
+                self.run_button.setEnabled(False)
+                self.pause_button.setEnabled(False)
+                self.resume_button.setEnabled(False)
+                self.stop_button.setEnabled(False)
+            time.sleep(0.1)
 
     def setup_error_popup(self):
         self.error_popup = QMessageBox(self)
@@ -56,7 +80,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.error_popup.setWindowTitle(title)
         self.error_popup.setText(message)
         self.error_popup.exec_()
-
 
     def setup_hooks(self):
         """
@@ -71,12 +94,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setting4_combo = self.findChild(QtWidgets.QComboBox, 'setting4_combo')
         self.unit4_combo = self.findChild(QtWidgets.QComboBox, 'unit4_combo')
         self.run_button = self.findChild(QtWidgets.QPushButton, 'runButton')
+        self.pause_button = self.findChild(QtWidgets.QPushButton, 'pauseButton')
+        self.resume_button = self.findChild(QtWidgets.QPushButton, 'resumeButton')
+        self.stop_button = self.findChild(QtWidgets.QPushButton, 'stopButton')
         self.flowrate_line = self.findChild(QtWidgets.QLineEdit, 'flowrate_line')
         self.flowunit_combo = self.findChild(QtWidgets.QComboBox, 'flowunit_combo')
         self.value1_line = self.findChild(QtWidgets.QLineEdit, 'value1_line')
         self.value2_line = self.findChild(QtWidgets.QLineEdit, 'value2_line')
         self.value3_line = self.findChild(QtWidgets.QLineEdit, 'value3_line')
         self.value4_line = self.findChild(QtWidgets.QLineEdit, 'value4_line')
+        self.vol_dispensed = self.findChild(QtWidgets.QLCDNumber, 'voldispensed_disp')
+        self.tube_number = self.findChild(QtWidgets.QLCDNumber, 'tubeIteration_disp')
+        self.time_elapsed = self.findChild(QtWidgets.QLCDNumber, 'timeElapsed_disp')
 
     def setup_params_table(self):
         self.rows = {
@@ -183,27 +212,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def setup_buttons(self):
         self.run_button.clicked.connect(self.run_pressed)
+        self.pause_button.clicked.connect(self.pause_pressed)
+        self.resume_button.clicked.connect(self.resume_pressed)
+        self.stop_button.clicked.connect(self.stop_pressed)
 
-    def calculate_collection_time(self):
-        fr_dict = self.get_flowrate_text()
-        frvalue = float(fr_dict['value'])
-        frunit = fr_dict['unit']
-
-        # Convert flow rate to common units.
-        frvalue *= frunit_to_uL_hr[frunit]
-        # Find volume per fraction value and unit
-        for row in self.rows.values():
-            if row['setting'].currentText() == 'Volume per fraction':
-                value = float(row['value'].text())
-                unit = row['unit'].currentText()
-
-                # Convert volume per fraction to common units.
-                value *= fracsize_to_uL[unit]
-                # calculate collection time & return that.
-                return value/frvalue*3600
-
-        # If we get here, something went horribly wrong.
-        raise Exception('Failed to find "Volume per fraction" setting.')
+        self.pause_button.setEnabled(False)
+        self.resume_button.setEnabled(False)
 
     def run_pressed(self):
         logging.info('run button pressed')
@@ -227,48 +241,45 @@ class MainWindow(QtWidgets.QMainWindow):
             self.show_error_popup(error_messsage, title='Input error')
             return
 
-        stoptime = self.calculate_collection_time()
+        fr_dict = self.get_flowrate_text()
+        frvalue = float(fr_dict['value'])
+        frunit = fr_dict['unit']
 
-        angles = read_angles(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'HARDWARE', 'angles.txt')
-        )
-        commands = make_commands(angles)
-        setup_cmds = [
-        "<SET_ACCEL,111,1000.0,1000.0,1000.0>",
-        "<SET_SPEED,111,1000.0,1000.0,1000.0>",
-        ]
-        port = populate_ports()
-        print("\n[setup] Connecting to port: {}".format(port))
-        s = connect(port)
-        time.sleep(5) #wait for the arduino to initialize
-        print(listen(s))
-        print("\n[setup] Sending setup commands..")
-        talk(s, setup_cmds)
-        time.sleep(1)
-        print("\n[action] Sending run commands..")
-        print(stoptime)
-        #print(commands)
-
-        numfrac = 0
+        # Find volume per fraction value and unit
         for row in self.rows.values():
-            #print(row)
-            #print(row['setting'].currentText())
+            if row['setting'].currentText() == 'Volume per fraction':
+                value = float(row['value'].text())
+                unit = row['unit'].currentText()
+        n_fractions = 0
+        # Find volume per fraction value and unit
+        for row in self.rows.values():
             if row['setting'].currentText() == 'Number of fractions':
-                numfrac = int(float((row['value'].text())))
+                n_fractions = int(float((row['value'].text())))
                 break
 
-        for command in commands[:(numfrac-1)]:
-            time.sleep(stoptime)
-            print(command)
-            talk(s, [command])
-        talk(s, ["<RUN,111,84,84,84>"])
+        t = threading.Thread(
+            target=self.colosseum.run,
+            args=(value, unit, frvalue, frunit, n_fractions),
+            daemon=True, # terminate thread if UI is terminated
+        )
+        t.start()
+        self.pause_button.setEnabled(True)
 
-    def pause_resume_pressed(self):
-        pass
+    def pause_pressed(self):
+        self.colosseum.pause()
+        self.resume_button.setEnabled(True)
+        self.pause_button.setEnabled(False)
+
+    def resume_pressed(self):
+        t = threading.Thread(
+            target=self.colosseum.resume,
+            daemon=True, # terminate thread if UI is terminated
+        )
+        t.start()
+        self.pause_button.setEnabled(True)
+        self.resume_button.setEnabled(False)
 
     def stop_pressed(self):
-        print("\n[action] Sending stop commands..")
-        stop_cmd = "<STOP,111,0.0,0.0,0.0>"
-        talk(s, [stop_cmd])
-        print("\n[action] Closing port..")
-        s.close()
+        self.colosseum.stop()
+        self.pause_button.setEnabled(False)
+        self.resume_button.setEnabled(False)
