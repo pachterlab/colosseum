@@ -6,13 +6,13 @@ import threading
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import QEvent
-from PyQt5.QtWidgets import QErrorMessage, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QDialog, QErrorMessage, QListWidget, QMainWindow, QMessageBox
 
 from colosseum import Colosseum
 from constants import SETTINGS_LINK, SETTING_TO_UNITS_MAPPING, FRUNIT_TO_UL_HR, TIMEUNIT_TO_HR, VOLUNIT_TO_UL, FRACSIZE_TO_UL
 from utils import is_float, make_row_dict, read_angles, make_commands
 from unit_conversion import vol_from_time, time_from_vol, get_numfrac, get_fracsize
-from serial_comm import populate_ports, connect, talk, listen
+from serial_comm import get_arduino_ports, connect, talk, listen
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -36,10 +36,23 @@ def set_child_combo(parent_combo, child_combo):
 
 ui_file = 'fractioncollector.ui'
 
+class PortSelectionPopup(QDialog):
+    def __init__(self, *args, **kwargs):
+        super(PortSelectionPopup, self).__init__(*args, **kwargs)
+        self.setWindowTitle('Select an Arduino to connect to')
+        self.setModal(True)
+        self.port_selection = QListWidget(self)
+
+    def closeEvent(self, event):
+        event.ignore()
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi(ui_file, self)
+
+        self.colosseum = None
+        self.monitor_thread = None
 
         self.setup_hooks()
         self.setup_params_table()
@@ -47,16 +60,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setup_error_popup()
         self.show()
 
-        # Initialize colosseum logic
-        self.initialize()
+        # Display arduino selection popup
+        self.show_port_selection_popup()
 
-    def initialize(self):
-        port = populate_ports()
+    def show_port_selection_popup(self):
+        # Note that these are port objects.
+        ports = get_arduino_ports()
+        description_to_port = {port.description: port.device for port in ports}
+
+        # If there are no ports, display error message and exit.
+        if not ports:
+            self.show_error_popup('No Arduinos detected')
+
+        port_popup = QDialog()
+        port_popup.setWindowTitle('Select an Arduino to connect to')
+        port_popup.setModal(True)
+        port_selection = QListWidget(port_popup)
+        port_selection.move(10, 10)
+        for port in ports:
+            port_selection.addItem(port.description)
+        port_selection.adjustSize()
+
+        # Double-click
+        def port_selected(item):
+            port_popup.close()
+            self.initialize(description_to_port[item.text()])
+        port_selection.itemDoubleClicked.connect(port_selected)
+
+        port_popup.exec_()
+
+    def initialize(self, port):
         self.colosseum = Colosseum(port)
         self.monitor_thread = threading.Thread(
             target=self.monitor, daemon=True
         )
         self.monitor_thread.start()
+
+
 
     def monitor(self):
         while True:
@@ -80,6 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.error_popup.setWindowTitle(title)
         self.error_popup.setText(message)
         self.error_popup.exec_()
+        sys.exit(1)
 
     def setup_hooks(self):
         """
