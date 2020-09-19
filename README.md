@@ -10,7 +10,7 @@ We present colosseum, a low-cost, modular, and automated fluid sampling device f
 ## What's included?
 <ul>
   <li>Computer Aided Design (CAD) files of the 3D printed components.</li>
-  <li>Controller software (Python) and a graphical user interface (GUI) to control the pumps.</li>
+  <li>Controller software (Python) and a graphical user interface (GUI) to control the motor.</li>
   <li>Arduino firmware to send commands to the motors and receive commands from the GUI.</li>
   <li>Bill of materials for sourcing and purchasing materials.</li>
   <li>Detailed assembly instructions of hardware components.</li>
