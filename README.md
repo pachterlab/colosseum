@@ -31,7 +31,7 @@ We use the Arduino CNC shield to allow for up to three fraction collectors to be
 
 The software is configured to run the stepper motors with 200 steps per revolution at 1/4 microstepping, which translates to 800 steps per rotation. To configure this, it is necessary to add a jumper between the M1 pin of the Arduino CNC shield. More information about microstepping can be found in the product page for the DRV8825 Stepper Motor Driver, which is used by the [CNC shield](http://www.zyltech.com/arduino-cnc-shield-instructions/). 
 
-The Arduino should be flashed with the arduino_serialCOM_v0.1.ino sketch, available in the SOFTWARE/ folder. (*)
+The Arduino should be flashed with the motor_serial_com.ino sketch, available in the firmware/ folder.
 
 Make sure to download and install the [AccelStepper library](http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html). To install, unzip the zip file to the libraries sub-folder of your sketchbook, if you get stuck here is a how-to.
 
