@@ -56,14 +56,19 @@ The print parameter for these parts are as follows:
 </ul>
 
 ### Installing software
-The Python scripts are available in the SOFTWARE/ folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
+The Python scripts are available in the `SOFTWARE/` folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
 ![Screenshot of the GUI](SOFTWARE/fc_ui.PNG)
 
-The software you will need to run on your computer in order to control the Arduino is the colosseum_main.py script located in the SOFTWARE/ folder. To start up the UI, open up the terminal inside the folder with all of the .py and .ui files, and type:
+First, we need to make sure some Python dependencies are properly installed on your computer. We provide a `requirements.txt` file that contains all dependencies. Open up the terminal inside the `SOFTWARE/` folder and type:
+```
+pip install -r requirements.txt
+```
 
+The software you will need to run on your computer in order to control the Arduino is the `run.py` script located in the `SOFTWARE/` folder. To start up the UI, open up the terminal inside the folder with all of the .py and .ui files, and type:
+```
 python run.py
-
+```
 Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
 
 ## Startup Checklist
