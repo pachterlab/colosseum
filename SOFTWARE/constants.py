@@ -1,8 +1,13 @@
 import os
+from collections import namedtuple
+
 from utils import (
     read_angles,
     make_commands,
 )
+
+PORT = namedtuple('Port', ['description', 'device'])
+TEST_PORT = PORT('test port', 'test device')
 
 # params table mapping of setting to valid units
 SETTING_TO_UNITS_MAPPING = {

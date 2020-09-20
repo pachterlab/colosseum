@@ -11,15 +11,16 @@ from constants import (
 from serial_comm import (
     populate_ports,
     connect,
-    talk,
     listen,
+    talk,
 )
 
 logger = logging.getLogger(__name__)
 
 class Colosseum:
-    def __init__(self, port):
+    def __init__(self, port, testing=False):
         logger.info(f'[setup] initializing Arduino connection at port {port}')
+        self.testing = testing
         self.port = port
         self.running = False
         self.done = False
@@ -29,15 +30,17 @@ class Colosseum:
         # We need to cache these values to be able to resume
         self.run_cache = None
 
+        self.start_time = None
+
     def initialize(self):
         logger.debug(f'[setup] Connecting to port: {self.port}')
-        self.serial = connect(self.port)
+        self.serial = connect(self.port, dry_run=self.testing)
         time.sleep(5) # wait for arduino init
-        logger.debug(f'[setup] response was {listen(self.serial)}')
+        logger.debug(f'[setup] response was {listen(self.serial, dry_run=self.testing)}')
 
         # Send setup commands.
         logger.debug(f'[setup] sending setup commands')
-        talk(self.serial, SETUP_CMDS)
+        talk(self.serial, SETUP_CMDS, dry_run=self.testing)
         time.sleep(1)
 
     @classmethod
@@ -63,13 +66,15 @@ class Colosseum:
             flow_value,
             flow_unit,
         )
+        if self.start_time is None:
+            self.start_time = time.time()
         # Note: we assume the run starts at the 0th tube
         for i in range(self.position, n_fractions+1):
             command = COMMANDS[i]
             # TODO: add priming time instead of stoptime
             time.sleep(stop_time)
             logger.debug(f'[run] sending command {command}')
-            talk(self.serial, [command])
+            talk(self.serial, [command], dry_run=self.testing)
             self.position = i + 1
 
             if not self.running:
@@ -95,6 +100,6 @@ class Colosseum:
         self.running = False
         self.done = True
         logger.debug('[stop] sending stop command')
-        talk(self.serial, [STOP_CMD])
+        talk(self.serial, [STOP_CMD], dry_run=self.testing)
         logger.debug(f'[stop] closing serial port {self.port}')
         self.serial.close()

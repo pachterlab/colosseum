@@ -1,18 +1,37 @@
-import os
 import logging
+import os
 import sys
 import time
 import threading
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import QEvent
-from PyQt5.QtWidgets import QDialog, QErrorMessage, QListWidget, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import (
+    QDialog,
+    QErrorMessage,
+    QListWidget,
+    QMainWindow,
+    QMessageBox,
+)
 
 from colosseum import Colosseum
-from constants import SETTINGS_LINK, SETTING_TO_UNITS_MAPPING, FRUNIT_TO_UL_HR, TIMEUNIT_TO_HR, VOLUNIT_TO_UL, FRACSIZE_TO_UL
+from constants import (
+    FRACSIZE_TO_UL,
+    FRUNIT_TO_UL_HR,
+    SETTINGS_LINK,
+    SETTING_TO_UNITS_MAPPING,
+    TEST_PORT,
+    TIMEUNIT_TO_HR,
+    VOLUNIT_TO_UL,
+)
 from utils import is_float, make_row_dict, read_angles, make_commands
-from unit_conversion import vol_from_time, time_from_vol, get_numfrac, get_fracsize
-from serial_comm import get_arduino_ports, connect, talk, listen
+from unit_conversion import (
+    get_fracsize,
+    get_numfrac,
+    time_from_vol,
+    vol_from_time,
+)
+from serial_comm import get_arduino_ports
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -47,10 +66,11 @@ class PortSelectionPopup(QDialog):
         event.ignore()
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, testing=False):
         super(MainWindow, self).__init__()
         uic.loadUi(ui_file, self)
 
+        self.testing = testing
         self.colosseum = None
         self.monitor_thread = None
 
@@ -65,7 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_port_selection_popup(self):
         # Note that these are port objects.
-        ports = get_arduino_ports()
+        ports = get_arduino_ports(dry_run=self.testing)
         description_to_port = {port.description: port.device for port in ports}
 
         # If there are no ports, display error message and exit.
@@ -90,17 +110,22 @@ class MainWindow(QtWidgets.QMainWindow):
         port_popup.exec_()
 
     def initialize(self, port):
-        self.colosseum = Colosseum(port)
+        self.colosseum = Colosseum(port, testing=self.testing)
         self.monitor_thread = threading.Thread(
             target=self.monitor, daemon=True
         )
         self.monitor_thread.start()
 
-
-
     def monitor(self):
         while True:
             self.tube_number.display(self.colosseum.position)
+            if self.colosseum.start_time is not None and not self.colosseum.done:
+                elapsed = time.time() - self.colosseum.start_time
+                fr_dict = self.get_flowrate_text()
+                flow_value = float(fr_dict['value']) * FRUNIT_TO_UL_HR[fr_dict['unit']] / (1000 * 3600)
+                
+                self.time_elapsed.display(elapsed)
+                self.vol_dispensed.display(elapsed * flow_value)
 
             # Do some stuff if the run is finished.
             if self.colosseum.done:
@@ -108,7 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.pause_button.setEnabled(False)
                 self.resume_button.setEnabled(False)
                 self.stop_button.setEnabled(False)
-            time.sleep(0.1)
+            time.sleep(0.2)
 
     def setup_error_popup(self):
         self.error_popup = QMessageBox(self)

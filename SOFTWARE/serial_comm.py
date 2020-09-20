@@ -26,6 +26,8 @@ import time
 import serial
 import serial.tools.list_ports
 
+from constants import TEST_PORT
+
 startMarker = 60 # <
 endMarker = 62 # >
 midMarker = 44 # ,
@@ -62,7 +64,7 @@ def populate_ports():
             pass
     return result[-1]
 
-def get_arduino_ports():
+def get_arduino_ports(dry_run=False):
     """Detect which serial ports are connected to an Arduino.
 
     Parameters
@@ -74,6 +76,9 @@ def get_arduino_ports():
     list
         A list of serial ports connected to an Arduino
     """
+    if dry_run:
+        return [TEST_PORT] 
+
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
@@ -90,7 +95,7 @@ def get_arduino_ports():
         if 'arduino' in port.description.lower()
     ]
 
-def connect(port, baudrate=2000000):
+def connect(port, baudrate=2000000, dry_run=False):
     """Connects to the specified serial port
 
     Parameters
@@ -109,6 +114,8 @@ def connect(port, baudrate=2000000):
         receive commands from the object interfacing with the serial port at
         location 'port'.
     """
+    if dry_run:
+        return serial.Serial()
     s = serial.Serial()
     s.port = port
     s.baudrate = baudrate
@@ -119,7 +126,7 @@ def connect(port, baudrate=2000000):
     s.open()
     return s
 
-def write_to_serial(s, string):
+def write_to_serial(s, string, dry_run=False):
     """Write a string to the arduino connected to serial port 's'.
 
     Parameters
@@ -132,12 +139,14 @@ def write_to_serial(s, string):
     Returns
     -------
     """
+    if dry_run:
+        return
 
     s.write(string.encode())
     s.flushInput()
     return
 
-def listen(s):
+def listen(s, dry_run=False):
     """Listen to strings being sent from the Serial Object at the port.
 
     Parameters
@@ -150,6 +159,8 @@ def listen(s):
     msg: str
         The string that was sent from the Serial object to the computer.
     """
+    if dry_run:
+        return ""
 
     msg = ""
     x = "z" # any value that is not an end- or startMarker
@@ -172,7 +183,7 @@ def listen(s):
 
     return(msg)
 
-def talk(s, commands):
+def talk(s, commands, dry_run=False):
     """Send a list of commands to the Arduino connected at the Serial port.
 
     Parameters
@@ -196,15 +207,15 @@ def talk(s, commands):
         if not cmd_valid(teststr):
             continue # returns to beginning of for loop and grabs next string
         if waitingForReply == False:
-            write_to_serial(s, teststr)
+            write_to_serial(s, teststr, dry_run=dry_run)
             print("Sent from PC -- " + teststr) # Prints out what was sent to the Arduino
             waitingForReply = True
 
         if waitingForReply == True:
-            while s.inWaiting() == 0:
+            while not dry_run and s.inWaiting() == 0:
                 pass
 
-            dataRecvd = listen(s)
+            dataRecvd = listen(s, dry_run=dry_run)
             print("Reply Received -- " + dataRecvd) # Prints out what was received by the Arduino
             waitingForReply = False
 
