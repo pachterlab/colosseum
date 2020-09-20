@@ -37,6 +37,24 @@ Make sure to download and install the [AccelStepper library](http://www.airspayc
 
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
 
+### Setting up the hardware
+We have four 3D printed parts for colosseum, which are:
+<ul>
+  <li> tube rack
+  <li> base
+  <li> base plate (support needed)
+  <li> dispenser arm (support needed)
+</ul>
+
+The print parameter for these parts are as follows:
+<ul>
+  <li> 1.75mm diameter PLA filament 
+  <li> nozzle temperature: 215°C
+  <li> bed temperature of 60°C
+  <li> 10% infill
+  <li> 0.2mm layer height for slicing
+</ul>
+
 ### Installing software
 The Python scripts are available in the SOFTWARE/ folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
@@ -57,16 +75,5 @@ Before starting the Python controller, make sure
   <li> The CNC shield is powered, and that all motors are plugged in to the CNC shield
 </ul>
 
-## Running the software and testing the fraction collector
-There are two ways to run the controller. The easiest way is to just double click the executable available below. Simply download the executable, double click it, and begin using it. Navigate to the Releases tab at the top to find the following executables.
-<ul>
-  <li> Windows
-  <li> Mac OS
-  <li> Ubuntu (coming soon)
-  <li> Raspbian
-</ul>
-
 ## Tips/Hints
 Things that we have learned along the way that may help with your build.
-
-Set the current limit on your motor controller to vary the stall torque. Increasing the current to the motor increases the stall torque and increases the max pressure that your syringe pump can run at. How to set the current limit.
