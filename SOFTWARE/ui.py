@@ -90,7 +90,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # If there are no ports, display error message and exit.
         if not ports:
-            self.show_error_popup('No Arduinos detected')
+            self.show_error_popup('No Arduinos detected', exit=True)
 
         port_popup = QDialog()
         port_popup.setWindowTitle('Select an Arduino to connect to')
@@ -123,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 elapsed = time.time() - self.colosseum.start_time
                 fr_dict = self.get_flowrate_text()
                 flow_value = float(fr_dict['value']) * FRUNIT_TO_UL_HR[fr_dict['unit']] / (1000 * 3600)
-                
+
                 self.time_elapsed.display(elapsed)
                 self.vol_dispensed.display(elapsed * flow_value)
 
@@ -140,12 +140,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.error_popup.setIcon(QMessageBox.Critical)
         self.error_popup.setWindowModality(QtCore.Qt.WindowModal)
 
-    def show_error_popup(self, message, title='Error'):
+    def show_error_popup(self, message, title='Error', exit=False):
         logger.error(message)
         self.error_popup.setWindowTitle(title)
         self.error_popup.setText(message)
         self.error_popup.exec_()
-        sys.exit(1)
+        if exit:
+            sys.exit(1)
 
     def setup_hooks(self):
         """
