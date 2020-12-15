@@ -24,7 +24,22 @@ The bill of materials with prices and vendor links is available on a [Google Spr
 __What do I need to make?__
 The 3D printed components can be fabricated on any desktop fused filament fabrication (FFF) 3D printer. They were designed using Autodesk Fusion 360, a proprietary CAD software that offers free academic licenses. STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder.They can be used with any slicing software to generate GCode for 3D printing.
 
-_Build Videos (Coming soon)_
+## Building colosseum
+[This video](https://youtu.be/yG7ECh5GO0o) will guide you through the building process of colosseum.
+
+Here are the steps for building colosseum:
+1. 3D print components.
+2. Attach set screws to the tube bed.
+3. Insert small ball bearings into base.
+4. Attach rubber feet on base.
+5. Insert rotary shaft into base and fix in place with ball bearing.
+6. Screw the stepper motor onto the base and attach motor couplings.
+7. Screw base plate onto base.
+8. Insert ball bearings into the slots on base plate.
+9. Insert another rotary shaft into arm and fix with set screw.
+10. Insert torsion spring into base plate and arm.
+11. Slide the tube bed through the center rotary shaft and align with arm.
+12. Tighten all set screws and run!
 
 ### Setting up the Arduino
 We use the Arduino CNC shield to allow for up to three fraction collectors to be controlled from a computer.
