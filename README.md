@@ -73,7 +73,7 @@ The print parameter for these parts are as follows:
 ### Installing software
 The Python scripts are available in the `SOFTWARE/` folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
-![Screenshot of the GUI](SOFTWARE/fc_ui.PNG)
+![Screenshot of the GUI](SOFTWARE/ui_screenshot.PNG)
 
 First, we need to make sure some Python dependencies are properly installed on your computer. We provide a `requirements.txt` file that contains all dependencies. Open up the terminal inside the `SOFTWARE/` folder and type:
 ```
