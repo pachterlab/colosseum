@@ -97,3 +97,8 @@ Before starting the Python controller, make sure
 
 ## Tips/Hints
 Things that we have learned along the way that may help with your build.
+<ul>
+  <li> If you hear a scratching noise while you rotate the tube rack, it means that the torsion spring on the arm is scratching the bottom of the tube rack so fold that end of the spring.
+  <li> If the dispenser arm does not rotate with the tube rack, it means that the follower on the arm is not correctly touching the grooves of the tube rack.
+  <li> Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
+</ul>
