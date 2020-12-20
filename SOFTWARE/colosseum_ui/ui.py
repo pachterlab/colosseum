@@ -467,12 +467,14 @@ class MainWindow(QtWidgets.QMainWindow):
         t.start()
         self.run_button.setEnabled(False)
         self.pause_button.setEnabled(True)
+        self.stop_button.setEnabled(True)
         self.status_label.setText('Running')
 
     def pause_pressed(self):
         self.colosseum.pause()
         self.resume_button.setEnabled(True)
         self.pause_button.setEnabled(False)
+        self.stop_button.setEnabled(True)
         self.status_label.setText('Paused')
 
     def resume_pressed(self):
@@ -482,11 +484,13 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         t.start()
         self.pause_button.setEnabled(True)
+        self.stop_button.setEnabled(True)
         self.resume_button.setEnabled(False)
         self.status_label.setText('Running')
 
     def stop_pressed(self):
         self.colosseum.stop()
+        self.stop_button.setEnabled(False)
         self.pause_button.setEnabled(False)
         self.resume_button.setEnabled(False)
         self.status_label.setText('Stopped')
