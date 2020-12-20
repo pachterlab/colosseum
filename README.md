@@ -82,7 +82,7 @@ Make sure to download and install the [AccelStepper library](http://www.airspayc
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
 
 ## Installing software
-The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
+The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
 
 ![Screenshot of the GUI](SOFTWARE/ui_screenshot.PNG)
 
