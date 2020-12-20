@@ -423,7 +423,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             if result != QMessageBox.Cancel:
                 return
-            n_fractions = int(n_fractions)
+        n_fractions = int(n_fractions)
         if n_fractions > len(ANGLES) or n_fractions < 1:
             self.show_error_popup(
                 f'Number of fractions ({n_fractions}) is not within the allowed range [1, {len(ANGLES)}].',
