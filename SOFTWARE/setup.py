@@ -11,7 +11,7 @@ setup(
     version='0.0.1',
     url='https://github.com/sbooeshaghi/colosseum',
     author='Kyung Hoi (Joseph) Min, Yeokyoung (Anne) Kil, A. Sina Booeshaghi',
-    author_email='phoenixter96@gmail.com, ',
+    author_email='phoenixter96@gmail.com, ykil@caltech.edu, abooesha@caltech.edu',
     maintainer='Kyung Hoi (Joseph) Min',
     maintainer_email='phoenixter96@gmail.com',
     description='colosseum system - open source fraction collector for laboratories',
