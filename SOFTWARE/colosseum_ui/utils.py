@@ -1,3 +1,9 @@
+def is_int(s):
+    try:
+        int(s)
+    except ValueError:
+        return False
+    return True
 
 def is_float(s):
     """
@@ -29,4 +35,3 @@ def make_commands(angles):
 
 def dummy_function(*args, **kwargs):
     return
-    

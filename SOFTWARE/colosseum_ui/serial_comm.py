@@ -26,7 +26,7 @@ import time
 import serial
 import serial.tools.list_ports
 
-from constants import TEST_PORT
+from .constants import TEST_PORT
 
 startMarker = 60 # <
 endMarker = 62 # >
@@ -77,7 +77,7 @@ def get_arduino_ports(dry_run=False):
         A list of serial ports connected to an Arduino
     """
     if dry_run:
-        return [TEST_PORT] 
+        return [TEST_PORT]
 
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]

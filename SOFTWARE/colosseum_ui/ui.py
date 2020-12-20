@@ -3,35 +3,40 @@ import os
 import sys
 import time
 import threading
+from functools import partial
 
 from PyQt5 import QtCore, QtWidgets, uic
 from PyQt5.QtCore import QEvent
+from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (
     QDialog,
     QErrorMessage,
+    QLabel,
     QListWidget,
     QMainWindow,
     QMessageBox,
 )
 
-from colosseum import Colosseum
-from constants import (
+from .colosseum import Colosseum
+from .constants import (
+    ANGLES,
     FRACSIZE_TO_UL,
     FRUNIT_TO_UL_HR,
     SETTINGS_LINK,
     SETTING_TO_UNITS_MAPPING,
     TEST_PORT,
     TIMEUNIT_TO_HR,
+    UI_PATH,
     VOLUNIT_TO_UL,
 )
-from utils import is_float, make_row_dict, read_angles, make_commands
-from unit_conversion import (
+from .utils import is_float, is_int, make_row_dict
+from .unit_conversion import (
     get_fracsize,
     get_numfrac,
     time_from_vol,
     vol_from_time,
 )
-from serial_comm import get_arduino_ports
+from .serial_comm import get_arduino_ports
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -53,64 +58,85 @@ def set_child_combo(parent_combo, child_combo):
     logger.info('{} selected, setting child combo index {}'.format(chosen, index))
     child_combo.setCurrentIndex(index)
 
-ui_file = 'fractioncollector.ui'
-
 class PortSelectionPopup(QDialog):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent, ports, *args, **kwargs):
         super(PortSelectionPopup, self).__init__(*args, **kwargs)
+        self.parent = parent
+        self.ports = ports
+        self.selected = False
+
         self.setWindowTitle('Select an Arduino to connect to')
         self.setModal(True)
         self.port_selection = QListWidget(self)
+        self.port_selection.move(10, 10)
+        for port in ports:
+            self.port_selection.addItem(port.description)
+        self.port_selection.adjustSize()
+        description_to_port = {port.description: port.device for port in ports}
+
+        # Double-click
+        def port_selected(item):
+            self.selected = True
+            port = description_to_port[item.text()]
+            self.close()
+
+            # Show connecting popup
+            popup = QMessageBox(parent)
+            popup.setWindowModality(QtCore.Qt.WindowModal)
+            popup.setIcon(QMessageBox.Information)
+            popup.setStandardButtons(QMessageBox.Abort)
+            popup.setWindowTitle('Please wait')
+            popup.setText(f'Connecting to Arduino at port:\n{port}')
+            t = threading.Thread(target=parent.initialize, args=(port, partial(popup.done, 0)), daemon=True)
+            t.start()
+            result = popup.exec_()
+            if result == QMessageBox.Abort:
+                parent.show_error_popup('Connect canceled', exit=True)
+        self.port_selection.itemDoubleClicked.connect(port_selected)
 
     def closeEvent(self, event):
-        event.ignore()
+        if not self.selected:
+            self.parent.show_error_popup('No port selected', exit=True)
+        event.accept()
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, testing=False):
         super(MainWindow, self).__init__()
-        uic.loadUi(ui_file, self)
+        uic.loadUi(UI_PATH, self)
 
         self.testing = testing
         self.colosseum = None
         self.monitor_thread = None
 
         self.setup_hooks()
+        self.setup_validators()
         self.setup_params_table()
         self.setup_buttons()
-        self.setup_error_popup()
         self.show()
 
         # Display arduino selection popup
         self.show_port_selection_popup()
 
+        self.volume_unit = 'mL'
+        self.time_unit = 'sec'
+
     def show_port_selection_popup(self):
         # Note that these are port objects.
         ports = get_arduino_ports(dry_run=self.testing)
-        description_to_port = {port.description: port.device for port in ports}
 
         # If there are no ports, display error message and exit.
         if not ports:
             self.show_error_popup('No Arduinos detected', exit=True)
 
-        port_popup = QDialog()
-        port_popup.setWindowTitle('Select an Arduino to connect to')
-        port_popup.setModal(True)
-        port_selection = QListWidget(port_popup)
-        port_selection.move(10, 10)
-        for port in ports:
-            port_selection.addItem(port.description)
-        port_selection.adjustSize()
-
-        # Double-click
-        def port_selected(item):
-            port_popup.close()
-            self.initialize(description_to_port[item.text()])
-        port_selection.itemDoubleClicked.connect(port_selected)
-
+        port_popup = PortSelectionPopup(self, ports)
         port_popup.exec_()
 
-    def initialize(self, port):
+        return port_popup
+
+    def initialize(self, port, callback=None):
         self.colosseum = Colosseum(port, testing=self.testing)
+        if callable(callback):
+            callback()
         self.monitor_thread = threading.Thread(
             target=self.monitor, daemon=True
         )
@@ -122,10 +148,12 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.colosseum.start_time is not None and not self.colosseum.done:
                 elapsed = time.time() - self.colosseum.start_time
                 fr_dict = self.get_flowrate_text()
-                flow_value = float(fr_dict['value']) * FRUNIT_TO_UL_HR[fr_dict['unit']] / (1000 * 3600)
+                flow_value = float(fr_dict['value']) * FRUNIT_TO_UL_HR[fr_dict['unit']] / 3600
 
-                self.time_elapsed.display(elapsed)
-                self.vol_dispensed.display(elapsed * flow_value)
+                self.vol_dispensed_unit.setText(self.volume_unit)
+                self.time_elapsed_unit.setText(self.time_unit)
+                self.time_elapsed.display((elapsed * 3600) / TIMEUNIT_TO_HR[self.time_unit])
+                self.vol_dispensed.display((elapsed * flow_value) / VOLUNIT_TO_UL[self.volume_unit])
 
             # Do some stuff if the run is finished.
             if self.colosseum.done:
@@ -133,25 +161,39 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.pause_button.setEnabled(False)
                 self.resume_button.setEnabled(False)
                 self.stop_button.setEnabled(False)
+                return
             time.sleep(0.2)
 
-    def setup_error_popup(self):
-        self.error_popup = QMessageBox(self)
-        self.error_popup.setIcon(QMessageBox.Critical)
-        self.error_popup.setWindowModality(QtCore.Qt.WindowModal)
+    def show_message_popup(self, title, message, icon=QMessageBox.Information, buttons=QMessageBox.Ok):
+        popup = QMessageBox(self)
+        popup.setWindowModality(QtCore.Qt.WindowModal)
+        popup.setIcon(icon)
+        popup.setStandardButtons(buttons)
+        popup.setWindowTitle(title)
+        popup.setText(message)
+        return popup.exec_()
 
     def show_error_popup(self, message, title='Error', exit=False):
-        logger.error(message)
-        self.error_popup.setWindowTitle(title)
-        self.error_popup.setText(message)
-        self.error_popup.exec_()
+        result = self.show_message_popup(title, message, icon=QMessageBox.Critical)
         if exit:
             sys.exit(1)
+        return result
 
     def setup_hooks(self):
         """
         Function to set up hooks from the .ui file into this class.
         """
+        # Tube count
+        self.tube_count_label = self.findChild(QtWidgets.QLabel, 'tube_count_label')
+        self.tube_count_line = self.findChild(QtWidgets.QLineEdit, 'tube_count_line')
+
+        # Flowrate
+        self.flowrate_label = self.findChild(QtWidgets.QLabel, 'flowrate_label')
+        self.flowrate_line = self.findChild(QtWidgets.QLineEdit, 'flowrate_line')
+        self.flowunit_combo = self.findChild(QtWidgets.QComboBox, 'flowunit_combo')
+        self.tubeunit_combo = self.findChild(QtWidgets.QComboBox, 'tubeunit_combo')
+
+        # Settings
         self.setting1_combo = self.findChild(QtWidgets.QComboBox, 'setting1_combo')
         self.unit1_combo = self.findChild(QtWidgets.QComboBox, 'unit1_combo')
         self.setting2_combo = self.findChild(QtWidgets.QComboBox, 'setting2_combo')
@@ -160,19 +202,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.unit3_combo = self.findChild(QtWidgets.QComboBox, 'unit3_combo')
         self.setting4_combo = self.findChild(QtWidgets.QComboBox, 'setting4_combo')
         self.unit4_combo = self.findChild(QtWidgets.QComboBox, 'unit4_combo')
-        self.run_button = self.findChild(QtWidgets.QPushButton, 'runButton')
-        self.pause_button = self.findChild(QtWidgets.QPushButton, 'pauseButton')
-        self.resume_button = self.findChild(QtWidgets.QPushButton, 'resumeButton')
-        self.stop_button = self.findChild(QtWidgets.QPushButton, 'stopButton')
-        self.flowrate_line = self.findChild(QtWidgets.QLineEdit, 'flowrate_line')
-        self.flowunit_combo = self.findChild(QtWidgets.QComboBox, 'flowunit_combo')
         self.value1_line = self.findChild(QtWidgets.QLineEdit, 'value1_line')
         self.value2_line = self.findChild(QtWidgets.QLineEdit, 'value2_line')
         self.value3_line = self.findChild(QtWidgets.QLineEdit, 'value3_line')
         self.value4_line = self.findChild(QtWidgets.QLineEdit, 'value4_line')
+
+        # Buttons
+        self.run_button = self.findChild(QtWidgets.QPushButton, 'runButton')
+        self.pause_button = self.findChild(QtWidgets.QPushButton, 'pauseButton')
+        self.resume_button = self.findChild(QtWidgets.QPushButton, 'resumeButton')
+        self.stop_button = self.findChild(QtWidgets.QPushButton, 'stopButton')
+
+        # Status
+        self.status_label = self.findChild(QtWidgets.QLabel, 'status_label')
         self.vol_dispensed = self.findChild(QtWidgets.QLCDNumber, 'voldispensed_disp')
         self.tube_number = self.findChild(QtWidgets.QLCDNumber, 'tubeIteration_disp')
         self.time_elapsed = self.findChild(QtWidgets.QLCDNumber, 'timeElapsed_disp')
+        self.vol_dispensed_unit = self.findChild(QtWidgets.QLabel, 'voldispensed_unit')
+        self.time_elapsed_unit = self.findChild(QtWidgets.QLabel, 'timeElapsed_unit')
+
+    def setup_validators(self):
+        self.tube_count_line.setValidator(QIntValidator())
+        self.flowrate_line.setValidator(QDoubleValidator())
+        self.value1_line.setValidator(QDoubleValidator())
+        self.value2_line.setValidator(QDoubleValidator())
 
     def setup_params_table(self):
         self.rows = {
@@ -205,6 +258,35 @@ class MainWindow(QtWidgets.QMainWindow):
         self.unit3_combo.currentIndexChanged.connect(self.update_row4)
         self.unit4_combo.currentIndexChanged.connect(self.update_row4)
 
+        # Disable setting dropdown if there is a value present
+        def disable(target, text, *args, **kwargs):
+            print(text)
+            if text:
+                target.setEnabled(False)
+            else:
+                target.setEnabled(True)
+        self.value1_line.textChanged.connect(partial(disable, self.setting1_combo))
+        self.value2_line.textChanged.connect(partial(disable, self.setting2_combo))
+
+    def disable_inputs(self):
+        inputs = [
+            self.tube_count_line,
+            self.flowrate_line,
+            self.flowunit_combo,
+            self.tubeunit_combo,
+            self.setting1_combo,
+            self.unit1_combo,
+            self.setting2_combo,
+            self.unit2_combo,
+            self.unit3_combo,
+            self.unit4_combo,
+            self.value1_line,
+            self.value2_line,
+        ]
+
+        for input in inputs:
+            input.setEnabled(False)
+
     def update_row3(self, *args, **kwargs):
         logger.info('updating row 3')
         flowrate = self.get_flowrate_text()
@@ -234,7 +316,7 @@ class MainWindow(QtWidgets.QMainWindow):
         row3 = self.get_row_contents_text(self.rows[3])
 
         # Check if flowrate and row1 values are valid.
-        if not (is_float(flowrate['value']) and is_float(row2['value'])):
+        if not (is_float(flowrate['value']) and is_float(row1['value']) and is_float(row2['value'])):
             self.rows[4]['value'].setText('')
             return
 
@@ -285,23 +367,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.pause_button.setEnabled(False)
         self.resume_button.setEnabled(False)
+        self.stop_button.setEnabled(False)
 
     def run_pressed(self):
         logging.info('run button pressed')
+        tube_count = self.tube_count_line.text()
         input1 = self.value1_line.text()
         input2 = self.value2_line.text()
         input3 = self.flowrate_line.text()
 
-        setting1 = self.setting1_combo.currentText()
-        setting2 = self.setting2_combo.currentText()
-
+        # Check for any invalid inputs
         invalid = []
-        if not is_float(input1):
-            invalid.append('"{}" needs to be a number'.format(setting1))
-        if not is_float(input2):
-            invalid.append('"{}" needs to be a number'.format(setting2))
+        if not is_int(tube_count):
+            invalid.append(f'"{self.tube_count_label.text()}" needs to be a number')
         if not is_float(input3):
-            invalid.append('"Flowrate" needs to be a number')
+            invalid.append(f'"{self.flowrate_label.text()}" needs to be a number')
+        if not is_float(input1):
+            invalid.append(f'"{self.setting1_combo.currentText()}" needs to be a number')
+        if not is_float(input2):
+            invalid.append(f'"{self.setting2_combo.currentText()}" needs to be a number')
 
         if invalid:
             error_messsage = '\n'.join(invalid)
@@ -312,30 +396,84 @@ class MainWindow(QtWidgets.QMainWindow):
         frvalue = float(fr_dict['value'])
         frunit = fr_dict['unit']
 
-        # Find volume per fraction value and unit
+        n_fractions = None
         for row in self.rows.values():
+            # Find volume per fraction value and unit
             if row['setting'].currentText() == 'Volume per fraction':
                 value = float(row['value'].text())
                 unit = row['unit'].currentText()
-        n_fractions = 0
-        # Find volume per fraction value and unit
-        for row in self.rows.values():
-            if row['setting'].currentText() == 'Number of fractions':
-                n_fractions = int(float((row['value'].text())))
-                break
+            # Find volume per fraction value and unit
+            elif row['setting'].currentText() == 'Number of fractions':
+                n_fractions = float((row['value'].text()))
+            # Find volume unit
+            elif row['setting'].currentText() == 'Total volume':
+                self.volume_unit = row['unit'].currentText()
+            elif row['setting'].currentText() == 'Total time':
+                self.time_unit = row['unit'].currentText()
 
+        if n_fractions != int(n_fractions):
+            result = self.show_message_popup(
+                'Warning',
+                (
+                    f'Number of fractions ({n_fractions}) is not an integer. '
+                    f'The floor ({int(n_fractions)}) will be taken. '
+                ),
+                icon=QMessageBox.Warning,
+                buttons=QMessageBox.Ok | QMessageBox.Cancel
+            )
+            if result != QMessageBox.Cancel:
+                return
+            n_fractions = int(n_fractions)
+        if n_fractions > len(ANGLES) or n_fractions < 1:
+            self.show_error_popup(
+                f'Number of fractions ({n_fractions}) is not within the allowed range [1, {len(ANGLES)}].',
+                title='Input error'
+            )
+            return
+
+        tube_size_text = self.tubeunit_combo.currentText()
+        tube_size = tube_size_text[:-2]
+        tube_unit = tube_size_text[-2:]
+        if value * VOLUNIT_TO_UL[unit] > float(tube_size) * VOLUNIT_TO_UL[tube_unit]:
+            self.show_error_popup(
+                f'Volume per fraction exceeds tube size',
+                title='Input error'
+            )
+            return
+
+        # Check number of tubes and display warning if tube count < num fractions
+        n_tubes = int(tube_count)
+        if n_tubes < n_fractions:
+            result = self.show_message_popup(
+                'Warning',
+                (
+                    f'Number of fractions ({n_fractions}) is greater than '
+                    f'number of tubes ({n_tubes}). Continuing may cause fractions to '
+                    f'be dispensed into the collector and damage the internals. '
+                    'Continue?'
+                ),
+                icon=QMessageBox.Warning,
+                buttons=QMessageBox.Yes | QMessageBox.No
+            )
+            if result != QMessageBox.Yes:
+                return
+
+        self.disable_inputs()
         t = threading.Thread(
             target=self.colosseum.run,
             args=(value, unit, frvalue, frunit, n_fractions),
             daemon=True, # terminate thread if UI is terminated
         )
         t.start()
+        self.run_button.setEnabled(False)
         self.pause_button.setEnabled(True)
+        self.status_label.setText('Running')
 
     def pause_pressed(self):
         self.colosseum.pause()
         self.resume_button.setEnabled(True)
         self.pause_button.setEnabled(False)
+        self.status_label.setText('Paused')
 
     def resume_pressed(self):
         t = threading.Thread(
@@ -345,8 +483,10 @@ class MainWindow(QtWidgets.QMainWindow):
         t.start()
         self.pause_button.setEnabled(True)
         self.resume_button.setEnabled(False)
+        self.status_label.setText('Running')
 
     def stop_pressed(self):
         self.colosseum.stop()
         self.pause_button.setEnabled(False)
         self.resume_button.setEnabled(False)
+        self.status_label.setText('Stopped')

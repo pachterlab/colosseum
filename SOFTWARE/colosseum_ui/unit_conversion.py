@@ -1,5 +1,5 @@
 # Need to import constants table
-from constants import FRUNIT_TO_UL_HR, TIMEUNIT_TO_HR, VOLUNIT_TO_UL, FRACSIZE_TO_UL
+from .constants import FRUNIT_TO_UL_HR, TIMEUNIT_TO_HR, VOLUNIT_TO_UL, FRACSIZE_TO_UL
 # from utils import is_float, make_row_dict
 
 # calculating volume if the user inputs time

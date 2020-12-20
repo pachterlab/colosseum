@@ -1,10 +1,15 @@
 import os
 from collections import namedtuple
 
-from utils import (
+from .utils import (
     read_angles,
     make_commands,
 )
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+UI_PATH = os.path.join(DATA_DIR, 'fractioncollector.ui')
+ANGLES_PATH = os.path.join(DATA_DIR, 'angles.txt')
 
 PORT = namedtuple('Port', ['description', 'device'])
 TEST_PORT = PORT('test port', 'test device')
@@ -50,9 +55,7 @@ FRACSIZE_TO_UL = {
     'mL' : 1000,
 }
 
-ANGLES = read_angles(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'HARDWARE', 'angles.txt')
-)
+ANGLES = read_angles(ANGLES_PATH)
 COMMANDS = make_commands(ANGLES)
 SETUP_CMDS = [
     "<SET_ACCEL,111,1000.0,1000.0,1000.0>",

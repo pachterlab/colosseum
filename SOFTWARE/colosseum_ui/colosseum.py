@@ -1,14 +1,14 @@
 import logging
 import time
 
-from constants import (
+from .constants import (
     COMMANDS,
     FRACSIZE_TO_UL,
     FRUNIT_TO_UL_HR,
     SETUP_CMDS,
     STOP_CMD,
 )
-from serial_comm import (
+from .serial_comm import (
     populate_ports,
     connect,
     listen,
@@ -35,7 +35,8 @@ class Colosseum:
     def initialize(self):
         logger.debug(f'[setup] Connecting to port: {self.port}')
         self.serial = connect(self.port, dry_run=self.testing)
-        time.sleep(5) # wait for arduino init
+        if not self.testing:
+            time.sleep(5) # wait for arduino init
         logger.debug(f'[setup] response was {listen(self.serial, dry_run=self.testing)}')
 
         # Send setup commands.
@@ -82,8 +83,7 @@ class Colosseum:
                 return
 
         logger.info('[run] done')
-        self.running = False
-        self.done = True
+        self.stop()
 
     def pause(self):
         logger.info(f'[pause] pausing run at position {self.position}')
