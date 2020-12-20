@@ -77,9 +77,11 @@ The software is configured to run the stepper motors with 200 steps per revoluti
 
 The Arduino should be flashed with the motor_serial_com.ino sketch, available in the firmware/ folder.
 
-Make sure to download and install the [AccelStepper library](http://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html). To install, unzip the zip file to the libraries sub-folder of your sketchbook, if you get stuck here is a how-to.
+Make sure to download and install the [AccelStepper library](https://www.airspayce.com/mikem/arduino/AccelStepper/). To install, unzip the zip file to the libraries sub-folder of your sketchbook.
 
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
+
+We recommend that you wrap wires in [cable wraps](https://www.amazon.com/dp/B07FW3GTXB/ref=cm_sw_r_tw_dp_fq83Fb2VRK9QQ?_x_encoding=UTF8&psc=1) and placing your Arduino+CNC shield in a case like [this](https://www.thingiverse.com/thing:3125495).
 
 ## Installing software
 The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
@@ -99,11 +101,13 @@ Before starting the Python controller, make sure
   <li> The Arduino is connected via USB to the computer
   <li> You have appropriately placed jumpers on the CNC Shield to allow for microstepping and hardware enabling (discussed in build video).
   <li> The CNC shield is powered, and that all motors are plugged in to the CNC shield
+  <li> The dispenser arm is above the center of the first tube.
 </ul>
 
 ## Tips/Hints
 Things that we have learned along the way that may help with your build.
 <ul>
+  <li> The first tube can be used as a drip tube to catch any drips before you actually start collecting fractions. It will be numbered 0 on the GUI.
   <li> If you hear a scratching noise while you rotate the tube rack, it means that the torsion spring on the arm is scratching the bottom of the tube rack so fold that end of the spring.
   <li> If the dispenser arm does not rotate with the tube rack, it means that the follower on the arm is not correctly touching the grooves of the tube rack.
   <li> Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
