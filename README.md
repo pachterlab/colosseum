@@ -46,7 +46,7 @@ We have four 3D printed parts for colosseum, which are:
 
 The print parameter for these parts are as follows:
 <ul>
-  <li> 1.75mm diameter PLA filament 
+  <li> 1.75mm diameter PLA filament
   <li> nozzle temperature: 215°C
   <li> bed temperature of 60°C
   <li> 10% infill
@@ -73,7 +73,7 @@ Here are the steps for building colosseum:
 ### Setting up the Arduino
 We use the Arduino CNC shield to allow for up to three fraction collectors to be controlled from a computer.
 
-The software is configured to run the stepper motors with 200 steps per revolution at 1/4 microstepping, which translates to 800 steps per rotation. To configure this, it is necessary to add a jumper between the M1 pin of the Arduino CNC shield. More information about microstepping can be found in the product page for the DRV8825 Stepper Motor Driver, which is used by the [CNC shield](http://www.zyltech.com/arduino-cnc-shield-instructions/). 
+The software is configured to run the stepper motors with 200 steps per revolution at 1/4 microstepping, which translates to 800 steps per rotation. To configure this, it is necessary to add a jumper between the M1 pin of the Arduino CNC shield. More information about microstepping can be found in the product page for the DRV8825 Stepper Motor Driver, which is used by the [CNC shield](http://www.zyltech.com/arduino-cnc-shield-instructions/).
 
 The Arduino should be flashed with the motor_serial_com.ino sketch, available in the firmware/ folder.
 
@@ -82,20 +82,15 @@ Make sure to download and install the [AccelStepper library](http://www.airspayc
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
 
 ## Installing software
-The Python scripts are available in the `SOFTWARE/` folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
+The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
 ![Screenshot of the GUI](SOFTWARE/ui_screenshot.PNG)
 
-First, we need to make sure some Python dependencies are properly installed on your computer. We provide a `requirements.txt` file that contains all dependencies. Open up the terminal inside the `SOFTWARE/` folder and type:
+The GUI is provided as a standalone Python package, installable with `pip`. Open up the terminal inside the `SOFTWARE/` folder and type:
 ```
-pip install -r requirements.txt
+pip install .
 ```
-
-The software you will need to run on your computer in order to control the Arduino is the `run.py` script located in the `SOFTWARE/` folder. To start up the UI, open up the terminal inside the folder with all of the .py and .ui files, and type:
-```
-python run.py
-```
-Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
+The Colosseum GUI is now installed and can be started by typing `colosseum` in the termnal. Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
 
 ## Startup Checklist
 Before starting the Python controller, make sure
