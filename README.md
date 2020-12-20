@@ -7,6 +7,15 @@
 ## Tl;dr
 We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
 
+## Table of Contents
+1. [What's included?](#whats-included)
+2. [Getting Started](#getting-started)
+3. [Setting up the hardware](#setting-up-the-hardware)
+6. [Installing software](#installing-software)
+7. [Startup checklist](#startup-checklist)
+8. [Tips/Hints](#tipshints)
+
+
 ## What's included?
 <ul>
   <li>Computer Aided Design (CAD) files of the 3D printed components.</li>
@@ -26,7 +35,25 @@ The 3D printed components can be fabricated on any desktop fused filament fabric
 
 ![](HARDWARE/colosseum_movie.gif)
 
-## Building colosseum
+## Setting up the hardware
+We have four 3D printed parts for colosseum, which are:
+<ul>
+  <li> tube rack
+  <li> base
+  <li> base plate (support needed)
+  <li> dispenser arm (support needed)
+</ul>
+
+The print parameter for these parts are as follows:
+<ul>
+  <li> 1.75mm diameter PLA filament 
+  <li> nozzle temperature: 215°C
+  <li> bed temperature of 60°C
+  <li> 10% infill
+  <li> 0.2mm layer height for slicing
+</ul>
+
+### Building colosseum
 [This video](https://youtu.be/yG7ECh5GO0o) will guide you through the building process of colosseum.
 
 Here are the steps for building colosseum:
@@ -54,25 +81,7 @@ Make sure to download and install the [AccelStepper library](http://www.airspayc
 
 The fraction collector is driven by an Arduino board that interprets commands sent via USB and sends the signals to control the stepper motor movement. For directions on how to flash an arduino please refer to the official guide: https://www.arduino.cc/en/Guide/HomePage
 
-### Setting up the hardware
-We have four 3D printed parts for colosseum, which are:
-<ul>
-  <li> tube rack
-  <li> base
-  <li> base plate (support needed)
-  <li> dispenser arm (support needed)
-</ul>
-
-The print parameter for these parts are as follows:
-<ul>
-  <li> 1.75mm diameter PLA filament 
-  <li> nozzle temperature: 215°C
-  <li> bed temperature of 60°C
-  <li> 10% infill
-  <li> 0.2mm layer height for slicing
-</ul>
-
-### Installing software
+## Installing software
 The Python scripts are available in the `SOFTWARE/` folder. The GUI was created using Qt designer, a drag and drop application for organizing buttons that allows the used to easily make modifications. This GUI is used to interface with a Python script that controls both the microscope and Arduino via USB.
 
 ![Screenshot of the GUI](SOFTWARE/ui_screenshot.PNG)
@@ -104,3 +113,5 @@ Things that we have learned along the way that may help with your build.
   <li> If the dispenser arm does not rotate with the tube rack, it means that the follower on the arm is not correctly touching the grooves of the tube rack.
   <li> Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
 </ul>
+
+## If you want to contribute to colosseum, feel free to write on the Discussions page on this repo!
