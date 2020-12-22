@@ -7,6 +7,10 @@
 ## Tl;dr
 We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
 
+<p align="center">
+  <img src="HARDWARE/colosseum_movie.gif">
+</p>
+
 ## Table of Contents
 1. [What's included?](#whats-included)
 2. [Getting Started](#getting-started)
@@ -32,8 +36,6 @@ The bill of materials with prices and vendor links is available on a [Google Spr
 
 __What do I need to make?__
 The 3D printed components can be fabricated on any desktop fused filament fabrication (FFF) 3D printer. They were designed using Autodesk Fusion 360, a proprietary CAD software that offers free academic licenses. STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder. They can be used with any slicing software to generate GCode for 3D printing. Here is a [Fusion 360 view](https://myhub.autodesk360.com/ue2c949df/g/shares/SH56a43QTfd62c1cd968bfa386c6090cd625?viewState=NoIgbgDAdAjCA0IDeAdEAXAngBwKZoC40ARXAZwEsBzAOzXjQEMyzd1C0AjAJgDMBjHgHYAHAFpcATgDM-MQBZ5vXmMkATeZNXLpMEQFYR6iNzQBfEAF0gA) of colosseum:
-
-![](HARDWARE/colosseum_movie.gif)
 
 ## Setting up the hardware
 We have four 3D printed parts for colosseum, which are:
@@ -86,7 +88,9 @@ We recommend that you wrap wires in [cable wraps](https://www.amazon.com/dp/B07F
 ## Installing software
 The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
 
-![Screenshot of the GUI](SOFTWARE/ui_screenshot.PNG)
+<p align="center">
+  <img src="SOFTWARE/ui_screenshot.PNG">
+</p>
 
 The GUI is provided as a standalone Python package, installable with `pip`. Open up the terminal inside the `SOFTWARE/` folder and type:
 ```
