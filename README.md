@@ -92,11 +92,18 @@ The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GU
   <img src="SOFTWARE/ui_screenshot.PNG">
 </p>
 
-The GUI is provided as a standalone Python package, installable with `pip`. Open up the terminal inside the `SOFTWARE/` folder and type:
+The GUI is provided as a standalone Python package, installable with `pip`. To
+install the latest official release, open up the terminal and type:
+```
+pip install colosseum-ui
+```
+The Colosseum GUI is now installed and can be started by typing `colosseum` in the termnal. Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
+
+### Manual installation
+You may also install the GUI manually by opening up the terminal inside the `SOFTWARE/` folder and typing:
 ```
 pip install .
 ```
-The Colosseum GUI is now installed and can be started by typing `colosseum` in the termnal. Before you run the system, MAKE SURE YOU HAVE INSTALLED THE ARDUINO FIRMWARE!!
 
 ## Startup Checklist
 Before starting the Python controller, make sure
