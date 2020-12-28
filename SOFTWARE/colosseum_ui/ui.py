@@ -239,10 +239,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.time_elapsed_unit = self.findChild(QtWidgets.QLabel, 'timeElapsed_unit')
 
     def setup_validators(self):
-        self.tube_count_line.setValidator(QIntValidator())
-        self.flowrate_line.setValidator(QDoubleValidator())
-        self.value1_line.setValidator(QDoubleValidator())
-        self.value2_line.setValidator(QDoubleValidator())
+        int_validator = QIntValidator()
+        int_validator.setBottom(0)
+        double_validator = QDoubleValidator()
+        double_validator.setBottom(0.)
+        self.tube_count_line.setValidator(int_validator)
+        self.flowrate_line.setValidator(double_validator)
+        self.value1_line.setValidator(double_validator)
+        self.value2_line.setValidator(double_validator)
 
     def setup_params_table(self):
         self.rows = {
