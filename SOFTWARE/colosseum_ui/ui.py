@@ -6,7 +6,7 @@ import threading
 from functools import partial
 
 from PyQt5 import QtCore, QtWidgets, uic
-from PyQt5.QtCore import QEvent
+from PyQt5.QtCore import pyqtSignal, QThread
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
 from PyQt5.QtWidgets import (
     QDialog,
@@ -58,6 +58,25 @@ def set_child_combo(parent_combo, child_combo):
     logger.info('{} selected, setting child combo index {}'.format(chosen, index))
     child_combo.setCurrentIndex(index)
 
+class UiThread(QThread):
+    success = pyqtSignal()
+    error = pyqtSignal()
+
+    def __init__(self, function, *args, **kwargs):
+        super(QThread, self).__init__()
+
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        try:
+            self.function(*self.args, **self.kwargs)
+            self.success.emit()
+        except:
+            self.error.emit()
+
+
 class PortSelectionPopup(QDialog):
     def __init__(self, parent, ports, *args, **kwargs):
         super(PortSelectionPopup, self).__init__(*args, **kwargs)
@@ -76,9 +95,8 @@ class PortSelectionPopup(QDialog):
 
         # Double-click
         def port_selected(item):
-            self.selected = True
             port = description_to_port[item.text()]
-            self.close()
+            self.accept()
 
             # Show connecting popup
             popup = QMessageBox(parent)
@@ -87,17 +105,18 @@ class PortSelectionPopup(QDialog):
             popup.setStandardButtons(QMessageBox.Abort)
             popup.setWindowTitle('Please wait')
             popup.setText(f'Connecting to Arduino at port:\n{port}')
-            t = threading.Thread(target=parent.initialize, args=(port, partial(popup.done, 0)), daemon=True)
+            t = UiThread(parent.initialize, port)
+            t.success.connect(partial(popup.done, 0))
             t.start()
             result = popup.exec_()
             if result == QMessageBox.Abort:
+                if t.isRunning():
+                    t.terminate()
                 parent.show_error_popup('Connect canceled', exit=True)
         self.port_selection.itemDoubleClicked.connect(port_selected)
-
-    def closeEvent(self, event):
-        if not self.selected:
-            self.parent.show_error_popup('No port selected', exit=True)
-        event.accept()
+        self.rejected.connect(partial(
+            parent.show_error_popup, 'No port selected', exit=True
+        ))
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, testing=False):
@@ -133,10 +152,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         return port_popup
 
-    def initialize(self, port, callback=None):
+    def initialize(self, port):
         self.colosseum = Colosseum(port, testing=self.testing)
-        if callable(callback):
-            callback()
         self.monitor_thread = threading.Thread(
             target=self.monitor, daemon=True
         )
@@ -260,7 +277,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Disable setting dropdown if there is a value present
         def disable(target, text, *args, **kwargs):
-            print(text)
             if text:
                 target.setEnabled(False)
             else:
