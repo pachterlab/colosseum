@@ -48,11 +48,11 @@ We have four 3D printed parts for colosseum, which are:
 
 The print parameter for these parts are as follows:
 <ul>
-  <li> 1.75mm diameter PLA filament
+  <li> 1.75 mm diameter PLA filament
   <li> nozzle temperature: 215°C
   <li> bed temperature of 60°C
   <li> 10% infill
-  <li> 0.2mm layer height for slicing
+  <li> 0.2 mm layer height for slicing
 </ul>
 
 ### Building colosseum
