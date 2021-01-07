@@ -64,7 +64,7 @@ Here are the steps for building colosseum:
 3. Insert small ball bearings into base.
 4. Attach rubber feet on base.
 5. Insert rotary shaft into base and fix in place with ball bearing.
-6. Screw the stepper motor onto the base and attach motor couplings.
+6. Screw the stepper motor onto the base (with washers on the hex screws) and attach motor couplings.
 7. Screw base plate onto base.
 8. Insert ball bearings into the slots on base plate.
 9. Insert another rotary shaft into arm and fix with set screw.
