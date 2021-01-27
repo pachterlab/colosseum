@@ -2,7 +2,9 @@
 
 <p>A modular, highly customizable, open source fraction collector.</p>
 
-![The colosseum fraction collector](HARDWARE/colosseum_homeview.png)
+<p align="center">
+  <img src="HARDWARE/colosseum_homeview.png">
+</p>
 
 ## Tl;dr
 We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
