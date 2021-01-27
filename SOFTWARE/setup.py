@@ -8,7 +8,7 @@ def read(path):
 
 setup(
     name='colosseum_ui',
-    version='0.0.4',
+    version='0.0.5',
     url='https://github.com/sbooeshaghi/colosseum',
     author='Kyung Hoi (Joseph) Min, Yeokyoung (Anne) Kil, A. Sina Booeshaghi',
     author_email='phoenixter96@gmail.com, ykil@caltech.edu, abooesha@caltech.edu',
