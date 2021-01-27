@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>839</width>
-    <height>563</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -483,9 +483,9 @@
     <property name="geometry">
      <rect>
       <x>130</x>
-      <y>440</y>
+      <y>470</y>
       <width>131</width>
-      <height>51</height>
+      <height>50</height>
      </rect>
     </property>
     <property name="text">
@@ -496,9 +496,9 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>440</y>
+      <y>470</y>
       <width>131</width>
-      <height>51</height>
+      <height>50</height>
      </rect>
     </property>
     <property name="text">
@@ -509,9 +509,9 @@
     <property name="geometry">
      <rect>
       <x>580</x>
-      <y>440</y>
+      <y>470</y>
       <width>131</width>
-      <height>51</height>
+      <height>50</height>
      </rect>
     </property>
     <property name="text">
@@ -522,9 +522,9 @@
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>410</y>
+      <y>400</y>
       <width>118</width>
-      <height>3</height>
+      <height>2</height>
      </rect>
     </property>
     <property name="orientation">
@@ -535,9 +535,9 @@
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>440</y>
+      <y>470</y>
       <width>131</width>
-      <height>51</height>
+      <height>50</height>
      </rect>
     </property>
     <property name="text">
@@ -608,6 +608,61 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="info_text">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>410</y>
+      <width>521</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="text">
+     <string>Please ensure the dispenser arm is centered on the first tube by rotating the tube bed. Tube numbering starts at zero. </string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="info_title">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>415</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <italic>false</italic>
+      <bold>true</bold>
+      <underline>false</underline>
+     </font>
+    </property>
+    <property name="text">
+     <string>Before you run:</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
