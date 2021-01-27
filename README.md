@@ -107,6 +107,16 @@ You may also install the GUI manually by opening up the terminal inside the `SOF
 pip install .
 ```
 
+If you get the following error when trying to run `colosseum` on Linux,
+```
+qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+```
+you need to install the appropriate `xcb` library for your Linux distribution.
+For Ubuntu users, `xcb` can be installed with the following command:
+```
+sudo apt install libxcb-xinerama0
+```
+
 ## Startup Checklist
 Before starting the Python controller, make sure
 <ul>
