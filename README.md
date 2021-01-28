@@ -37,7 +37,7 @@ __What do I need to buy?__
 The bill of materials with prices and vendor links is available on a [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1Z83jh0TSUGW6AqqXLzAsNthaGQMtfY0oZQ2VZEOLgi0/edit?usp=sharing).
 
 __What do I need to make?__
-The 3D printed components can be fabricated on any desktop fused filament fabrication (FFF) 3D printer. They were designed using Autodesk Fusion 360, a proprietary CAD software that offers free academic licenses. STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder. They can be used with any slicing software to generate GCode for 3D printing. Here is a [Fusion 360 view](https://a360.co/39lKs4v) of colosseum:
+The 3D printed components can be fabricated on any desktop fused filament fabrication (FFF) 3D printer. They were designed using Autodesk Fusion 360, a proprietary CAD software that offers free academic licenses. STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder. They can be used with any slicing software to generate GCode for 3D printing. Here is a [Fusion 360 view](https://a360.co/36j9CPz) of colosseum:
 
 ## Setting up the hardware
 We have four 3D printed parts for colosseum, which are:
