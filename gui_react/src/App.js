@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Container, Dropdown, Row, Form, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './bootstrap.min.css';
 
 import logo from './logo.svg';
 import './App.css';
@@ -11,25 +11,21 @@ class App extends React.Component {
       <Container style={{
         position: 'absolute', left: '50%', top: '50%',
         transform: 'translate(-50%, -50%)'
-      }} className = "w-75 p-3 bg-light text-dark">
+      }} className="w-75">
         <Row>
-          <Col xs={9}>
-            <Row className = "p-2">
-              <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Col>
-                    <Form.Label>
-                      Number of Tubes
-                    </Form.Label>
-                  </Col>
-                  <Col md="auto">
-                    <Form.Control placeholder="# tubes" />
-                  </Col>
-                </Form.Group>
+          <Col className="col-9 mr-4">
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Number of Tubes
+                </Form.Label>
               </Col>
               <Col>
+                <Form.Control placeholder="# tubes" />
+              </Col>
+              <Col className="col-3">
                 <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                  <Dropdown.Toggle variant="outline-primary" id="dropdown-basic" style={{width:'100%'}}>
                     Tube Size
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
@@ -39,24 +35,20 @@ class App extends React.Component {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-            </Row>
-            <Row className = "p-2">
-              <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Col>
-                    <Form.Label>
-                      Flow rate
-                    </Form.Label>
-                  </Col>
-                  <Col md="auto">
-                    <Form.Control placeholder="Flow rate" />
-                  </Col>
-                </Form.Group>
+            </Form.Group>
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Flow rate
+                </Form.Label>
               </Col>
               <Col>
+                <Form.Control placeholder="Flow rate" />
+              </Col>
+              <Col className="col-3">
                 <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Tube Size
+                  <Dropdown.Toggle variant="outline-primary" id="dropdown-basic" style={{width:'100%'}}>
+                    Unit
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item href="#/action-1">uL/sec</Dropdown.Item>
@@ -68,24 +60,20 @@ class App extends React.Component {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-            </Row>
-            <Row className = "p-2">
-              <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Col>
-                    <Form.Label>
-                      Total Time
-                    </Form.Label>
-                  </Col>
-                  <Col md="auto">
-                    <Form.Control placeholder="Total time" />
-                  </Col>
-                </Form.Group>
+            </Form.Group>
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Total Time
+                </Form.Label>
               </Col>
               <Col>
+                <Form.Control placeholder="Total time" />
+              </Col>
+              <Col className="col-3">
                 <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Total Time
+                  <Dropdown.Toggle variant="outline-primary" id="dropdown-basic" style={{width:'100%'}}>
+                    Unit
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item href="#/action-1">sec</Dropdown.Item>
@@ -94,24 +82,20 @@ class App extends React.Component {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-            </Row>
-            <Row className = "p-2">
-              <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                <Col>
-                  <Form.Label>
-                    Volume per fraction
-                  </Form.Label>
-                </Col>
-                  <Col md="auto">
-                    <Form.Control placeholder="Volume per fraction" />
-                  </Col>
-                </Form.Group>
+            </Form.Group>
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Volume per fraction
+                </Form.Label>
               </Col>
               <Col>
+                <Form.Control placeholder="Volume per fraction" />
+              </Col>
+              <Col className="col-3">
                 <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Volume per fraction
+                  <Dropdown.Toggle variant="outline-primary" id="dropdown-basic" style={{width:'100%'}}>
+                    Unit
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item href="#/action-1">uL</Dropdown.Item>
@@ -119,24 +103,20 @@ class App extends React.Component {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-            </Row>
-            <Row className = "p-2">
-              <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Col>
-                    <Form.Label>
-                      Total Volume
-                    </Form.Label>
-                  </Col>
-                  <Col md="auto">
-                    <Form.Control placeholder="Total Volume" />
-                  </Col>
-                </Form.Group>
+            </Form.Group>
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Total Volume
+                </Form.Label>
               </Col>
               <Col>
+                <Form.Control placeholder="Total Volume" />
+              </Col>
+              <Col className="col-3">
                 <Dropdown>
-                  <Dropdown.Toggle variant="success" id="dropdown-basic">
-                    Volume per fraction
+                  <Dropdown.Toggle variant="outline-primary" id="dropdown-basic" style={{width:'100%'}}>
+                    Unit
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item href="#/action-1">uL</Dropdown.Item>
@@ -145,48 +125,46 @@ class App extends React.Component {
                   </Dropdown.Menu>
                 </Dropdown>
               </Col>
-            </Row>
+            </Form.Group>
+            <Form.Group as={Row} controlId="formPlaintextEmail">
+              <Col className="col-3">
+                <Form.Label>
+                  Number of Fractions
+                </Form.Label>
+              </Col>
+              <Col>
+                <Form.Control placeholder="Number of Fractions" />
+              </Col>
+            </Form.Group>
             <Row className = "p-2">
               <Col>
-                <Form.Group as={Row} controlId="formPlaintextEmail">
-                  <Form.Label>
-                    Number of fractions
-                  </Form.Label>
-                  <Col md="auto">
-                    <Form.Control placeholder="Number of fractions" />
-                  </Col>
-                </Form.Group>
+                 <Button variant="primary" className = "btn-block">Run</Button>
+              </Col>
+              <Col>
+                 <Button variant="primary" className = "btn-block">Pause</Button>
+              </Col>
+              <Col>
+                 <Button variant="primary" className = "btn-block">Resume</Button>
+              </Col>
+              <Col>
+                 <Button variant="primary" className = "btn-block">Stop</Button>
               </Col>
             </Row>
           </Col>
           <Col>
-            <Row className = "p-2">
-              Volume Dispensed
-            </Row>
-            <Row className = "p-2">
-              Time Elapsed
-            </Row>
-            <Row className = "p-2">
-              Tube Number
-            </Row>
+            <Form.Group controlId="exampleForm.ControlInput1" as={Row}>
+              <Form.Label>Volume Dispensed</Form.Label>
+              <Form.Control type="text" placeholder="Volume Dispensed" readOnly />
+            </Form.Group>
+            <Form.Group controlId="exampleForm.ControlInput1" as={Row}>
+              <Form.Label>Time Elapsed</Form.Label>
+              <Form.Control type="text" placeholder="Time Elapsed" readOnly />
+            </Form.Group>
+            <Form.Group controlId="exampleForm.ControlInput1" as={Row}>
+              <Form.Label>Tube Number</Form.Label>
+              <Form.Control type="text" placeholder="Tube Number" readOnly />
+            </Form.Group>
           </Col>
-        </Row>
-        <Row className = "p-2">
-          <Col>
-             <Button variant="success" className = "btn-block">Run</Button>
-          </Col>
-          <Col>
-             <Button variant="success" className = "btn-block">Pause</Button>
-          </Col>
-          <Col>
-             <Button variant="success" className = "btn-block">Resume</Button>
-          </Col>
-          <Col>
-             <Button variant="success" className = "btn-block">Stop</Button>
-          </Col>
-        </Row>
-        <Row className = "p-2">
-          test function stuff goes here
         </Row>
       </Container>
     );
