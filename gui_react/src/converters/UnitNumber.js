@@ -19,7 +19,7 @@ export default class UnitNumber {
     }
 
     // Value must be a number
-    if (!_.isNumber(value)) throw `Value must be a number, but got ${value}`;
+    if (!_.isNumber(value)) throw Error(`Value must be a number, but got ${value}`);
 
     // If this.units has units, then the provided unit must be one of those.
     if (!_.isEmpty(units) && !_.includes(units, unit)) {
