@@ -6,12 +6,6 @@ import { Row, Form } from 'react-bootstrap';
 export class StatusInput extends React.Component {
   static propTypes = {
     label: PropTypes.string.isRequired,
-    placeholder: PropTypes.string,
-    inputDisabled: PropTypes.bool,
-    onValueChange: PropTypes.func,
-  }
-  static defaultProps = {
-    inputDisabled: true
   }
 
   constructor(props) {
@@ -19,14 +13,6 @@ export class StatusInput extends React.Component {
     this.state = {
       value: ''
     }
-  }
-
-  // Called right after component is initialized.
-  // Note that this.setState() may be called here (but not in the constructor).
-
-  onValueChange(value) {
-    this.setState({value: value});
-    _.isFunction(this.props.onValueChange) && this.props.onValueChange(value);
   }
 
   render() {
@@ -37,9 +23,9 @@ export class StatusInput extends React.Component {
         </Form.Label>
         <Form.Control
           type="text"
-          placeholder={this.props.placeholder}
-          onChange={event => this.onValueChange(event.target.value)}
-          readOnly={this.props.inputDisabled}
+          placeholder=""
+          value={this.state.value}
+          readOnly
         />
       </Form.Group>
     )

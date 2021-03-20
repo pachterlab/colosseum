@@ -2,8 +2,7 @@ import React from 'react';
 import { Col, Container, Dropdown, Row, Form, Button } from 'react-bootstrap';
 import './bootstrap.min.css';
 
-import { UnitNumberInput } from './components';
-
+import { StatusInput, UnitNumberInput } from './components';
 /*
  * These arrays define what units to *display* (not what unit conversions are
  * supported; this should be defined in each of the converters).
@@ -102,18 +101,15 @@ class App extends React.Component {
   renderStatus = () => {
     return (
       <Container>
-        <Form.Group as={Row}>
-          <Form.Label>Volume Dispensed</Form.Label>
-          <Form.Control type="text" placeholder="Volume Dispensed" readOnly />
-        </Form.Group>
-        <Form.Group as={Row}>
-          <Form.Label>Time Elapsed</Form.Label>
-          <Form.Control type="text" placeholder="Time Elapsed" readOnly />
-        </Form.Group>
-        <Form.Group as={Row}>
-          <Form.Label>Tube Number</Form.Label>
-          <Form.Control type="text" placeholder="Tube Number" readOnly />
-        </Form.Group>
+        <StatusInput
+          label="Volume Dispensed"
+        />
+        <StatusInput
+          label="Time Elapsed"
+        />
+        <StatusInput
+          label="Tube Number"
+        />
       </Container>
     );
   }
