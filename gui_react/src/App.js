@@ -11,9 +11,9 @@ import { UnitNumberInput } from './components';
  * Otherwise things will break.
  */
 const flowRateUnits = ['uL/sec', 'uL/min', 'uL/hr', 'mL/sec', 'mL/min', 'mL/hr'];
-const totalTimeUnits = [];
-const volumePerFractionUnits = [];
-const totalVolumeUnits = [];
+const totalTimeUnits = ['sec', 'min', 'hr'];
+const volumePerFractionUnits = ['uL', 'mL'];
+const totalVolumeUnits = ['uL', 'mL', 'L'];
 
 
 class App extends React.Component {
