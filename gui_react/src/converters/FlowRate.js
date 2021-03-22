@@ -1,4 +1,4 @@
-import UnitNumber from './UnitNumber';
+import { UnitNumber } from './UnitNumber';
 
 const units = ['uL/sec', 'uL/min', 'uL/hr', 'mL/sec', 'mL/min', 'mL/hr'];
 const conversionFactors = {

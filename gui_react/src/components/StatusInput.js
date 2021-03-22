@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Form } from 'react-bootstrap';
@@ -18,9 +17,7 @@ export class StatusInput extends React.Component {
   render() {
     return(
       <Form.Group as={Row}>
-        <Form.Label>
-          {this.props.label}
-        </Form.Label>
+        <Form.Label>{this.props.label}</Form.Label>
         <Form.Control
           type="text"
           placeholder=""

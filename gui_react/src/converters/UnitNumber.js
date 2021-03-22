@@ -5,7 +5,7 @@ import _ from 'lodash';
  * number of another unit. Extend this class to implement custom
  * units and conversions.
  */
-export default class UnitNumber {
+export class UnitNumber {
   // A value without a unit can be constructed by calling UnitNumber(n).
   // Omitting the second argument like this is fine.
   constructor(value, unit, units=[], conversionFactors={}) {

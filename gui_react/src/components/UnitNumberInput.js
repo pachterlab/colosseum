@@ -11,12 +11,13 @@ export class UnitNumberInput extends React.Component {
   static propTypes = {
     label: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    units: PropTypes.arrayOf(PropTypes.string).isRequired,
+    units: PropTypes.arrayOf(PropTypes.string),
     inputDisabled: PropTypes.bool,
     dropdownDisabled: PropTypes.bool,
     onChange: PropTypes.func,
     onValueChange: PropTypes.func,
     onUnitChange: PropTypes.func,
+    validator: PropTypes.func,
   }
   static defaultProps = {
     inputDisabled: false,
@@ -28,6 +29,7 @@ export class UnitNumberInput extends React.Component {
     this.state = {
       value: '',
       unit: null,
+      invalid: null,
     }
   }
 
@@ -43,15 +45,20 @@ export class UnitNumberInput extends React.Component {
   }
 
   onValueChange(value) {
-    this.setState({value: value});
-    _.isFunction(this.props.onValueChange) && this.props.onValueChange(value);
-    this.onChange(value, this.state.unit);
+    const floatValue = parseFloat(value);
+    const invalid = _.isFunction(this.props.validator) && !_.isNaN(floatValue)
+      ? this.props.validator(floatValue)
+      : null;
+    _.isFunction(this.props.onValueChange) && this.props.onValueChange(floatValue);
+    this.onChange(floatValue, this.state.unit);
+    this.setState({value: value, invalid: invalid});
   }
 
   onUnitChange(unit) {
+    const floatValue = parseFloat(this.state.value);
     this.setState({unit: unit});
-    _.isFunction(this.props.onUnitChange) && this.props.onUnitChange(unit);
-    this.onChange(this.state.value, unit);
+    _.isFunction(this.props.onUnitChange) && this.props.onUnitChange(floatValue);
+    this.onChange(floatValue, unit);
   }
 
 
@@ -67,9 +74,14 @@ export class UnitNumberInput extends React.Component {
           <Form.Control
             placeholder={this.props.placeholder}
             type="number"
+            value={this.state.value}
             onChange={event => this.onValueChange(event.target.value)}
             readOnly={this.props.inputDisabled}
+            isInvalid={!_.isNil(this.state.invalid)}
           />
+          <Form.Control.Feedback type="invalid">
+            {this.state.invalid}
+          </Form.Control.Feedback>
         </Col>
         {!_.isNil(this.props.units) &&
           <Col className="col-3">

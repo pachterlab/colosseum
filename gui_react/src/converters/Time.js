@@ -1,4 +1,4 @@
-import UnitNumber from './UnitNumber';
+import { UnitNumber } from './UnitNumber';
 
 const units = ['sec', 'min', 'hr'];
 const conversionFactors = {

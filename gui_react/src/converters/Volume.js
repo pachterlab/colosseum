@@ -1,4 +1,4 @@
-import UnitNumber from './UnitNumber';
+import { UnitNumber } from './UnitNumber';
 
 const units = ['uL', 'mL', 'L'];
 const conversionFactors = {
