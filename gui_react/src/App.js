@@ -27,7 +27,6 @@ const constructTime = (value, unit) => constructUnitNumberFactory(Time, value, u
 const constructVolume = (value, unit) => constructUnitNumberFactory(Volume, value, unit);
 const constructUnitNumber = (value, unit) => constructUnitNumberFactory(UnitNumber, value, unit);
 
-const positiveValidator = value => value > 0 ? null : 'Number must be positive.';
 const integerValidator = value => Number.isInteger(value) ? null : 'Number must be an integer.';
 
 class App extends React.Component {
@@ -48,62 +47,69 @@ class App extends React.Component {
   renderInputs() {
     return (
       <Container>
-        <UnitNumberInput
-          label="Number of Tubes"
-          placeholder="# tubes"
-          units={tubeUnits}
-          inputDisabled={false}
-          validator={value => integerValidator(value) || positiveValidator(value)}
-          onChange={(value, unit) => this.setState({numberOfTubes: constructTube(value, unit)})}
-        />
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Number of Tubes"
+            placeholder="# tubes"
+            units={tubeUnits}
+            inputDisabled={false}
+            validator={value => integerValidator(value)}
+            onChange={(value, unit) => this.setState({numberOfTubes: constructTube(value, unit)})}
+          />
+        </Form.Group>
 
-        <UnitNumberInput
-          label="Flow rate"
-          placeholder="Flow rate"
-          units={flowRateUnits}
-          inputDisabled={false}
-          validator={positiveValidator}
-          onChange={(value, unit) => this.setState({flowRate: constructFlowRate(value, unit)})}
-        />
-
-        <hr />
-
-        <UnitNumberInput
-          label="Total time"
-          placeholder="Total time"
-          units={totalTimeUnits}
-          inputDisabled={false}
-          validator={positiveValidator}
-          onChange={(value, unit) => this.setState({totalTime: constructTime(value, unit)})}
-        />
-
-        <UnitNumberInput
-          label="Total volume"
-          placeholder="Total volume"
-          units={totalVolumeUnits}
-          inputDisabled={false}
-          validator={positiveValidator}
-          onChange={(value, unit) => this.setState({totalVolume: constructVolume(value, unit)})}
-        />
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Flow rate"
+            placeholder="Flow rate"
+            units={flowRateUnits}
+            inputDisabled={false}
+            onChange={(value, unit) => this.setState({flowRate: constructFlowRate(value, unit)})}
+          />
+        </Form.Group>
 
         <hr />
 
-        <UnitNumberInput
-          label="Volume per fraction"
-          placeholder="Volume per fraction"
-          units={volumePerFractionUnits}
-          inputDisabled={false}
-          validator={positiveValidator}
-          onChange={(value, unit) => this.setState({volumePerFraction: constructVolume(value, unit)})}
-        />
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Total time"
+            placeholder="Total time"
+            units={totalTimeUnits}
+            inputDisabled={false}
+            onChange={(value, unit) => this.setState({totalTime: constructTime(value, unit)})}
+          />
+        </Form.Group>
 
-        <UnitNumberInput
-          label="Number of fractions"
-          placeholder="Number of fractions"
-          inputDisabled={false}
-          validator={positiveValidator}
-          onChange={(value, unit) => this.setState({numberOfFractions: constructUnitNumber(value, unit)})}
-        />
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Total volume"
+            placeholder="Total volume"
+            units={totalVolumeUnits}
+            inputDisabled={false}
+            onChange={(value, unit) => this.setState({totalVolume: constructVolume(value, unit)})}
+          />
+        </Form.Group>
+
+        <hr />
+
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Volume per fraction"
+            placeholder="Volume per fraction"
+            units={volumePerFractionUnits}
+            inputDisabled={false}
+            onChange={(value, unit) => this.setState({volumePerFraction: constructVolume(value, unit)})}
+          />
+        </Form.Group>
+
+        <Form.Group as={Row}>
+          <UnitNumberInput
+            label="Number of fractions"
+            placeholder="Number of fractions"
+            inputDisabled={false}
+            onChange={(value, unit) => this.setState({numberOfFractions: constructUnitNumber(value, unit)})}
+          />
+        </Form.Group>
 
         <hr />
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Col, Dropdown, Row, Form } from 'react-bootstrap';
 
+const allowedChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 /*
  * A modular React component that renders a form group for number and unit input.
  * It provides onChange listeners for the value and unit (or either).
@@ -45,6 +46,9 @@ export class UnitNumberInput extends React.Component {
   }
 
   onValueChange(value) {
+    const validChars = _.every(value, char => _.includes(allowedChars, char));
+    const numPeriods = _.sumBy(value, char => char === '.');
+    if (!validChars || numPeriods > 1) return;
     const floatValue = parseFloat(value);
     const invalid = _.isFunction(this.props.validator) && !_.isNaN(floatValue)
       ? this.props.validator(floatValue)
@@ -64,7 +68,7 @@ export class UnitNumberInput extends React.Component {
 
   render() {
     return (
-      <Form.Group as={Row}>
+      <>
         <Col className="col-3">
           <Form.Label>
             {this.props.label}
@@ -73,7 +77,6 @@ export class UnitNumberInput extends React.Component {
         <Col>
           <Form.Control
             placeholder={this.props.placeholder}
-            type="number"
             value={this.state.value}
             onChange={event => this.onValueChange(event.target.value)}
             readOnly={this.props.inputDisabled}
@@ -105,7 +108,7 @@ export class UnitNumberInput extends React.Component {
             </Dropdown>
           </Col>
         }
-      </Form.Group>
+      </>
     );
   }
 }
