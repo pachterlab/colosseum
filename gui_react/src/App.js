@@ -3,7 +3,7 @@ import React from 'react';
 import { Col, Container, Dropdown, Row, Form, Button } from 'react-bootstrap';
 import './bootstrap.min.css';
 
-import { StatusInput, UnitNumberInput } from './components';
+import { StatusInput, UnitNumberInput, ConnectModal } from './components';
 import { FlowRate, Time, Tube, Volume, UnitNumber } from './converters';
 
 /*
@@ -47,6 +47,7 @@ class App extends React.Component {
   renderInputs() {
     return (
       <Container>
+        <ConnectModal/>
         <Form.Group as={Row}>
           <UnitNumberInput
             label="Number of Tubes"
