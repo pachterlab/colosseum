@@ -1,7 +1,18 @@
 import _ from 'lodash';
 import React from 'react';
-import { Col, Container, Dropdown, Row, Form, Button } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  Col,
+  Container,
+  Dropdown,
+  Form,
+  OverlayTrigger,
+  Row,
+} from 'react-bootstrap';
 import './bootstrap.min.css';
+
+import { BrowserSerial } from 'browser-serial';
 
 import { StatusInput, UnitNumberInput, ConnectModal } from './components';
 import { FlowRate, Time, Tube, Volume, UnitNumber } from './converters';
@@ -40,11 +51,28 @@ class App extends React.Component {
       totalVolume: null,
       volumePerFraction: null,
       numberOfFractions: null,
+      serial: new BrowserSerial(),
+      connectError: '',
+      connecting: false,
     };
   }
 
+  connect() {
+    this.setState({connecting: true});
+    this.state.serial.connect()
+      .then(result => this.setState({connectError: '', connecting: false}))
+      .catch(error => this.setState({connectError: error.toString(), connecting: false}));
+  }
+
+  disconnect() {
+    this.setState({connecting: true});
+    this.state.serial.disconnect()
+      .then(result => this.setState({connectError: '', connecting: false}))
+      .catch(error => this.setState({connectError: error.toString(), connecting: false}));
+  }
+
   // Call this function in render() to display input container.
-  renderInputs() {
+  renderInputs(isConnected) {
     return (
       <Container>
         <ConnectModal/>
@@ -116,16 +144,36 @@ class App extends React.Component {
 
         <Row className = "p-2">
           <Col>
-             <Button variant="primary" className = "btn-block">Run</Button>
+            <Button
+              variant="primary"
+              className="btn-block"
+              size="sm"
+              disabled={!isConnected}
+            >Run</Button>
           </Col>
           <Col>
-             <Button variant="primary" className = "btn-block">Pause</Button>
+            <Button
+              variant="primary"
+              className="btn-block"
+              size="sm"
+              disabled={!isConnected}
+            >Pause</Button>
           </Col>
           <Col>
-             <Button variant="primary" className = "btn-block">Resume</Button>
+            <Button
+              variant="primary"
+              className="btn-block"
+              size="sm"
+              disabled={!isConnected}
+            >Resume</Button>
           </Col>
           <Col>
-             <Button variant="primary" className = "btn-block">Stop</Button>
+            <Button
+              variant="primary"
+              className="btn-block"
+              size="sm"
+              disabled={!isConnected}
+            >Stop</Button>
           </Col>
         </Row>
       </Container>
@@ -133,10 +181,16 @@ class App extends React.Component {
   }
 
   // Call this function in render() to display status container.
-  renderStatus = () => {
+  renderStatus(isConnected) {
     return (
       <Container>
-        <StatusInput label="Volume Dispensed"/>
+        <Row className="justify-content-center">
+          <h4>Status</h4>
+        </Row>
+        <Row className="justify-content-center mb-4">
+          <Badge variant={isConnected ? 'success' : 'danger'}>{isConnected ? 'Connected' : 'Disconnnected'}</Badge>
+        </Row>
+        <StatusInput label="Volume Dispensed" />
         <StatusInput label="Time Elapsed" />
         <StatusInput label="Tube Number" />
       </Container>
@@ -144,19 +198,39 @@ class App extends React.Component {
   }
 
   render() {
+    const isConnected = !_.isNil(this.state.serial.port) && this.state.connectError === '';
     return (
       <Container style={{
         position: 'absolute', left: '50%', top: '50%',
         transform: 'translate(-50%, -50%)'
       }} className="w-75">
-        <Row>
-          <Col className="col-9 mr-4">
-            {this.renderInputs()}
+        <Row className="mb-5">
+          <Col className="col-3">
+            <Button
+              className="btn-block"
+              variant="primary"
+              onClick={() => isConnected ? this.disconnect() : this.connect()}
+              disabled={this.state.connecting}
+            >{this.state.connecting
+                ? 'Connecting...'
+                : isConnected
+                  ? 'Disconnect'
+                  : 'Connect'
+              }</Button>
           </Col>
-          <Col>
-            {this.renderStatus()}
+          <Col style={{color: 'red'}}>
+            {this.state.connectError}
           </Col>
         </Row>
+        <Row>
+          <Col className="col-9 mr-4">
+            <Row>{this.renderInputs(isConnected)}</Row>
+          </Col>
+          <Col>
+            <Row>{this.renderStatus(isConnected)}</Row>
+          </Col>
+        </Row>
+
       </Container>
     );
   }

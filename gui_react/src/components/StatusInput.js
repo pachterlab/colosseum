@@ -15,8 +15,8 @@ export class StatusInput extends React.Component {
   }
 
   render() {
-    return(
-      <Form.Group as={Row}>
+    return (
+      <Form.Group>
         <Form.Label>{this.props.label}</Form.Label>
         <Form.Control
           type="text"

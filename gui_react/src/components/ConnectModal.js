@@ -9,18 +9,14 @@ export class ConnectModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showWindow: false
+      show: false
     }
-  }
-
-  componentDidMount() {
-     this.setState({showWindow: true});
   }
 
   render() {
     return (
       <>
-        <Modal show={this.state.showWindow}>
+        <Modal show={this.state.show}>
           <Modal.Header closeButton>
             <Modal.Title>hehe</Modal.Title>
           </Modal.Header>
@@ -36,7 +32,7 @@ export class ConnectModal extends React.Component {
                 </Button>
               </Col>
               <Col>
-                <Button variant="secondary" onClick={ () => this.setState({showWindow: false}) }>
+                <Button variant="secondary" onClick={ () => this.setState({show: false}) }>
                   Close
                 </Button>
               </Col>
