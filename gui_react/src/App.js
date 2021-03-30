@@ -60,15 +60,17 @@ class App extends React.Component {
   connect() {
     this.setState({connecting: true});
     this.state.serial.connect()
-      .then(result => this.setState({connectError: '', connecting: false}))
-      .catch(error => this.setState({connectError: error.toString(), connecting: false}));
+      .then(result => this.setState({connectError: ''}))
+      .catch(error => this.setState({connectError: error.toString()}))
+      .finally(() => this.setState({connecting: false}));
   }
 
   disconnect() {
     this.setState({connecting: true});
     this.state.serial.disconnect()
-      .then(result => this.setState({connectError: '', connecting: false}))
-      .catch(error => this.setState({connectError: error.toString(), connecting: false}));
+      .then(result => this.setState({connectError: ''}))
+      .catch(error => this.setState({connectError: error.toString()}))
+      .finally(() => this.setState({connecting: false}));
   }
 
   // Call this function in render() to display input container.
