@@ -14,7 +14,7 @@ import './bootstrap.min.css';
 
 import { BrowserSerial } from 'browser-serial';
 
-import { StatusInput, UnitNumberInput, ConnectModal } from './components';
+import { NotSupportedModal, StatusInput, UnitNumberInput } from './components';
 import { FlowRate, Time, Tube, Volume, UnitNumber } from './converters';
 
 /*
@@ -40,6 +40,8 @@ const constructUnitNumber = (value, unit) => constructUnitNumberFactory(UnitNumb
 
 const integerValidator = value => Number.isInteger(value) ? null : 'Number must be an integer.';
 
+const webSerialSupported = 'serial' in navigator;
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -51,10 +53,18 @@ class App extends React.Component {
       totalVolume: null,
       volumePerFraction: null,
       numberOfFractions: null,
+
+      // Input selection
+      timeVolumeRadioSelection: '',
+      volumeNumberRadioSelection: '',
+
+      // Serial connection
       serial: new BrowserSerial(),
       connectError: '',
       connecting: false,
     };
+
+    this.notSupportedModal = React.createRef();
   }
 
   connect() {
@@ -73,11 +83,24 @@ class App extends React.Component {
       .finally(() => this.setState({connecting: false}));
   }
 
+  componentDidMount() {
+    // Show alert modal if web serial is not supported.
+    if (!webSerialSupported) {
+      this.notSupportedModal.current.setState({show: true});
+      this.setState({connectError: 'Web Serial API not found in current browser'});
+    }
+
+    // Select the first inputs by default
+    this.setState({
+      timeVolumeRadioSelection: 'totalTime',
+      volumeNumberRadioSelection: 'volumePerFraction',
+    });
+  }
+
   // Call this function in render() to display input container.
   renderInputs(isConnected) {
     return (
       <Container>
-        <ConnectModal/>
         <Form.Group as={Row}>
           <UnitNumberInput
             label="Number of Tubes"
@@ -102,21 +125,36 @@ class App extends React.Component {
         <hr />
 
         <Form.Group as={Row}>
+          <Form.Check
+            type="radio"
+            name="timeVolumeRadio"
+            value="totalTime"
+            checked={this.state.timeVolumeRadioSelection === 'totalTime'}
+            onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
+          />
           <UnitNumberInput
             label="Total time"
             placeholder="Total time"
             units={totalTimeUnits}
-            inputDisabled={false}
+            inputDisabled={this.state.timeVolumeRadioSelection !== 'totalTime'}
             onChange={(value, unit) => this.setState({totalTime: constructTime(value, unit)})}
           />
         </Form.Group>
 
         <Form.Group as={Row}>
+          <Form.Check
+            type="radio"
+            name="timeVolumeRadio"
+            value="totalVolume"
+            onChange={() => console.log("2")}
+            checked={this.state.timeVolumeRadioSelection === 'totalVolume'}
+            onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
+          />
           <UnitNumberInput
             label="Total volume"
             placeholder="Total volume"
             units={totalVolumeUnits}
-            inputDisabled={false}
+            inputDisabled={this.state.timeVolumeRadioSelection !== 'totalVolume'}
             onChange={(value, unit) => this.setState({totalVolume: constructVolume(value, unit)})}
           />
         </Form.Group>
@@ -124,20 +162,34 @@ class App extends React.Component {
         <hr />
 
         <Form.Group as={Row}>
+          <Form.Check
+            type="radio"
+            name="volumeNumberRadio"
+            value="volumePerFraction"
+            checked={this.state.volumeNumberRadioSelection === 'volumePerFraction'}
+            onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
+          />
           <UnitNumberInput
             label="Volume per fraction"
             placeholder="Volume per fraction"
             units={volumePerFractionUnits}
-            inputDisabled={false}
+            inputDisabled={this.state.volumeNumberRadioSelection !== 'volumePerFraction'}
             onChange={(value, unit) => this.setState({volumePerFraction: constructVolume(value, unit)})}
           />
         </Form.Group>
 
         <Form.Group as={Row}>
+          <Form.Check
+            type="radio"
+            name="volumeNumberRadio"
+            value="numberOfFractions"
+            checked={this.state.volumeNumberRadioSelection === 'numberOfFractions'}
+            onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
+          />
           <UnitNumberInput
             label="Number of fractions"
             placeholder="Number of fractions"
-            inputDisabled={false}
+            inputDisabled={this.state.volumeNumberRadioSelection !== 'numberOfFractions'}
             onChange={(value, unit) => this.setState({numberOfFractions: constructUnitNumber(value, unit)})}
           />
         </Form.Group>
@@ -199,41 +251,53 @@ class App extends React.Component {
     );
   }
 
+  // Render stuff that doesn't need to be placed anywhere, like modals.
+  renderOther() {
+    return (
+      <>
+        <NotSupportedModal ref={this.notSupportedModal} />
+      </>
+    )
+  }
+
   render() {
     const isConnected = !_.isNil(this.state.serial.port) && this.state.connectError === '';
     return (
-      <Container style={{
-        position: 'absolute', left: '50%', top: '50%',
-        transform: 'translate(-50%, -50%)'
-      }} className="w-75">
-        <Row className="mb-5">
-          <Col className="col-3">
-            <Button
-              className="btn-block"
-              variant="primary"
-              onClick={() => isConnected ? this.disconnect() : this.connect()}
-              disabled={this.state.connecting}
-            >{this.state.connecting
-                ? 'Connecting...'
-                : isConnected
-                  ? 'Disconnect'
-                  : 'Connect'
-              }</Button>
-          </Col>
-          <Col style={{color: 'red'}}>
-            {this.state.connectError}
-          </Col>
-        </Row>
-        <Row>
-          <Col className="col-9 mr-4">
-            <Row>{this.renderInputs(isConnected)}</Row>
-          </Col>
-          <Col>
-            <Row>{this.renderStatus(isConnected)}</Row>
-          </Col>
-        </Row>
+      <>
+        <Container style={{
+          position: 'absolute', left: '50%', top: '50%',
+          transform: 'translate(-50%, -50%)'
+        }} className="w-75">
+          <Row className="mb-5">
+            <Col className="col-3">
+              <Button
+                className="btn-block"
+                variant="primary"
+                onClick={() => isConnected ? this.disconnect() : this.connect()}
+                disabled={!webSerialSupported || this.state.connecting}
+              >{this.state.connecting
+                  ? 'Connecting...'
+                  : isConnected
+                    ? 'Disconnect'
+                    : 'Connect'
+                }</Button>
+            </Col>
+            <Col style={{color: 'red'}}>
+              {this.state.connectError}
+            </Col>
+          </Row>
+          <Row>
+            <Col className="col-9 mr-4">
+              <Row>{this.renderInputs(isConnected)}</Row>
+            </Col>
+            <Col>
+              <Row>{this.renderStatus(isConnected)}</Row>
+            </Col>
+          </Row>
+        </Container>
 
-      </Container>
+        {this.renderOther()}
+      </>
     );
   }
 }

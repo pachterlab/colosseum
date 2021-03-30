@@ -65,12 +65,13 @@ export class UnitNumberInput extends React.Component {
     this.onChange(floatValue, unit);
   }
 
-
   render() {
     return (
       <>
         <Col className="col-3">
-          <Form.Label>
+          <Form.Label
+            className={this.props.inputDisabled && 'text-muted'}
+          >
             {this.props.label}
           </Form.Label>
         </Col>
