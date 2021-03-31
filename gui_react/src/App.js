@@ -107,6 +107,8 @@ class App extends React.Component {
       // State depending on Colosseum status
       status: 0,
 
+      // Dev states
+      devCommand: '',
     };
 
     // Values will be UnitNumber instances representing each input
@@ -157,6 +159,11 @@ class App extends React.Component {
       .then(result => this.setState({connectError: ''}))
       .catch(error => this.setState({connectError: error.toString()}))
       .finally(() => this.setState({connecting: false}));
+  }
+
+  // @Anne command is a string
+  send(command) {
+    console.log(command);
   }
 
   update() {
@@ -424,7 +431,26 @@ class App extends React.Component {
           position: 'absolute', left: '50%', top: '50%',
           transform: 'translate(-50%, -50%)'
         }} className="w-75">
-          {isDevelopment && <Alert variant="warning">DEVELOPMENT MODE</Alert>}
+          {isDevelopment && <Alert variant="warning">
+            <p>DEVELOPMENT MODE</p>
+          <Form.Group>
+            <Row>
+              <Col className="col-7">
+                <Form.Control
+                  value={this.state.devCommand}
+                  onChange={event => this.setState({devCommand: event.target.value})}
+                  placeholder="Command"
+                />
+              </Col>
+              <Col>
+                <Button
+                  onClick={() => this.send(this.state.devCommand)}
+                  disabled={!isConnected}
+                >Send</Button>
+              </Col>
+            </Row>
+          </Form.Group>
+          </Alert>}
           <Row className="mb-5">
             <Col className="col-3">
               <Button
