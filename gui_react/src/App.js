@@ -170,6 +170,7 @@ class App extends React.Component {
     const unitNumber2 = this.unitNumbers[selection2];
     const targetUnit1 = this.unitNumberInputs[otherSelection1].current.unit;
     const targetUnit2 = this.unitNumberInputs[otherSelection2].current.unit;
+    console.log(targetUnit1, targetUnit2);
 
     // Check that required values exist.
     if (_.isNil(flowRate) || _.isNil(unitNumber1) || _.isNil(unitNumber2)) return;

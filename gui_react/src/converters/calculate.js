@@ -30,9 +30,10 @@ export function totalTimeVolumePerFraction(
   const _totalTime = totalTime.convert(_totalTimeUnit);
   const _volumePerFraction = volumePerFraction.convert(_volumePerFractionUnit);
 
-  const totalVolume = calculateTotalVolume(_flowRate, _totalTime).convert(totalVolumeUnit);
+  const _totalVolume = calculateTotalVolume(_flowRate, _totalTime);
+  const totalVolume = _totalVolume.convert(totalVolumeUnit);
   const numberOfFractions = calculateNumberOfFractions(
-    totalVolume, _volumePerFraction
+    _totalVolume, _volumePerFraction
   ).convert(numberOfFractionsUnit);
   return {totalVolume, numberOfFractions};
 }
@@ -45,9 +46,10 @@ export function totalTimeNumberOfFractions(
   const _totalTime = totalTime.convert(_totalTimeUnit);
   const _numberOfFractions = numberOfFractions.convert(_numberOfFractionsUnit);
 
-  const totalVolume = calculateTotalVolume(_flowRate, _totalTime).convert(totalVolumeUnit);
+  const _totalVolume = calculateTotalVolume(_flowRate, _totalTime);
+  const totalVolume = _totalVolume.convert(totalVolumeUnit);
   const volumePerFraction = calculateVolumePerFraction(
-    totalVolume, _numberOfFractions
+    _totalVolume, _numberOfFractions
   ).convert(volumePerFractionUnit);
   return {totalVolume, volumePerFraction};
 }
