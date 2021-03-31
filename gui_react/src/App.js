@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import {
+  Alert,
   Badge,
   Button,
   Col,
@@ -14,9 +15,20 @@ import {
 import './bootstrap.min.css';
 
 import { BrowserSerial } from 'browser-serial';
+import queryString from 'query-string';
 
 import { NotSupportedModal, StatusInput, UnitNumberInput } from './components';
-import { FlowRate, Time, Tube, Volume, UnitNumber } from './converters';
+import {
+  FlowRate,
+  Time,
+  totalTimeNumberOfFractions,
+  totalTimeVolumePerFraction,
+  totalVolumeNumberOfFractions,
+  totalVolumeVolumePerFraction,
+  Tube,
+  UnitNumber,
+  Volume,
+} from './converters';
 
 /*
  * These arrays define what units to *display* (not what unit conversions are
@@ -42,7 +54,9 @@ const constructUnitNumber = (value, unit) => constructUnitNumberFactory(UnitNumb
 const integerValidator = value => Number.isInteger(value) ? null : 'Number must be an integer.';
 const positiveValidator = value => value > 0 ? null : 'Number must be positive.';
 
+// Some configurations. Should these be in a separate file?
 const webSerialSupported = 'serial' in navigator;
+const isDevelopment = _.has(queryString.parse(window.location.search), 'dev');
 const statusTexts = {
   0: 'Not running',
   1: 'Running',
@@ -50,7 +64,7 @@ const statusTexts = {
   3: 'Stopped',
   4: 'Done',
   5: 'Error',
-}
+};
 const statusVariants = {
   0: 'danger',
   1: 'info',
@@ -58,7 +72,24 @@ const statusVariants = {
   3: 'danger',
   4: 'success',
   5: 'danger',
-}
+};
+const selectionFunctions = {
+  totalTime: {
+    volumePerFraction: totalTimeVolumePerFraction,
+    numberOfFractions: totalTimeNumberOfFractions,
+  },
+  totalVolume: {
+    volumePerFraction: totalVolumeVolumePerFraction,
+    numberOfFractions: totalVolumeNumberOfFractions,
+  },
+};
+// "Other" (i.e. disabled input) is hardcoded for now.
+const otherSelections = {
+  totalTime: 'totalVolume',
+  totalVolume: 'totalTime',
+  volumePerFraction: 'numberOfFractions',
+  numberOfFractions: 'volumePerFraction',
+};
 
 class App extends React.Component {
   constructor(props) {
@@ -72,13 +103,15 @@ class App extends React.Component {
       serial: new BrowserSerial(),
       connectError: '',
       connecting: false,
+
+      // State depending on Colosseum status
       status: 0,
+
     };
 
     // Values will be UnitNumber instances representing each input
     this.unitNumbers = {
       numberOfTubes: null,
-      tubeSize: null,
       flowRate: null,
       totalTime: null,
       totalVolume: null,
@@ -90,13 +123,24 @@ class App extends React.Component {
     this.notSupportedModal = React.createRef();
     this.unitNumberInputs = {
       numberOfTubes: React.createRef(),
-      tubeSize: React.createRef(),
       flowRate: React.createRef(),
       totalTime: React.createRef(),
       totalVolume: React.createRef(),
       volumePerFraction: React.createRef(),
       numberOfFractions: React.createRef(),
     };
+
+    // Bind functions
+    // Binding is required to be able to use `this` in these functions
+    this.connect = this.connect.bind(this);
+    this.disconnect = this.disconnect.bind(this);
+    this.update = this.update.bind(this);
+    this.validate = this.validate.bind(this);
+    this.run = this.run.bind(this);
+    this.pause = this.pause.bind(this);
+    this.resume = this.resume.bind(this);
+    this.stop = this.stop.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   connect() {
@@ -113,6 +157,62 @@ class App extends React.Component {
       .then(result => this.setState({connectError: ''}))
       .catch(error => this.setState({connectError: error.toString()}))
       .finally(() => this.setState({connecting: false}));
+  }
+
+  update() {
+    const selection1 = this.state.timeVolumeRadioSelection;
+    const selection2 = this.state.volumeNumberRadioSelection;
+    const otherSelection1 = otherSelections[selection1];
+    const otherSelection2 = otherSelections[selection2];
+
+    const flowRate = this.unitNumbers.flowRate;
+    const unitNumber1 = this.unitNumbers[selection1];
+    const unitNumber2 = this.unitNumbers[selection2];
+    const targetUnit1 = this.unitNumberInputs[otherSelection1].current.unit;
+    const targetUnit2 = this.unitNumberInputs[otherSelection2].current.unit;
+
+    // Check that required values exist.
+    if (_.isNil(flowRate) || _.isNil(unitNumber1) || _.isNil(unitNumber2)) return;
+
+    const calculated = selectionFunctions[selection1][selection2](
+      flowRate, unitNumber1, unitNumber2, targetUnit1, targetUnit2
+    );
+    _.forEach(calculated, (value, key) => {
+      this.unitNumberInputs[key].current.setUnitNumber(value);
+    });
+  }
+
+  validate() {
+    const results = _.map(this.unitNumbers, (value, key) => {
+      if (_.isNil(value)) {
+        this.unitNumberInputs[key].current.setState({invalid: 'Input is invalid.'});
+        return false;
+      } else {
+        return true;
+      }
+    });
+    return _.every(results);
+  }
+
+  run() {
+    this.validate();
+  }
+
+  pause() {
+
+  }
+
+  resume() {
+
+  }
+
+  stop() {
+
+  }
+
+  onChange(key, factory, value, unit, update=true) {
+    this.unitNumbers[key] = factory(value, unit);
+    update && this.update();
   }
 
   componentDidMount() {
@@ -141,7 +241,7 @@ class App extends React.Component {
             units={tubeUnits}
             inputDisabled={false}
             validator={value => integerValidator(value) || positiveValidator(value)}
-            onChange={(value, unit) => this.unitNumbers.numberOfTubes = constructTube(value, unit)}
+            onChange={(value, unit) => this.onChange('numberOfTubes', constructTube, value, unit, false)}
           />
         </Form.Group>
 
@@ -153,7 +253,7 @@ class App extends React.Component {
             units={flowRateUnits}
             inputDisabled={false}
             validator={positiveValidator}
-            onChange={(value, unit) => this.unitNumbers.flowRate = constructFlowRate(value, unit)}
+            onChange={(value, unit) => this.onChange('flowRate', constructFlowRate, value, unit)}
           />
         </Form.Group>
 
@@ -174,7 +274,7 @@ class App extends React.Component {
             units={totalTimeUnits}
             inputDisabled={this.state.timeVolumeRadioSelection !== 'totalTime'}
             validator={positiveValidator}
-            onChange={(value, unit) => this.unitNumbers.totalTime = constructTime(value, unit)}
+            onChange={(value, unit) => this.onChange('totalTime', constructTime, value, unit)}
           />
         </Form.Group>
 
@@ -195,7 +295,7 @@ class App extends React.Component {
             units={totalVolumeUnits}
             inputDisabled={this.state.timeVolumeRadioSelection !== 'totalVolume'}
             validator={positiveValidator}
-            onChange={(value, unit) => this.unitNumbers.totalVolume = constructVolume(value, unit)}
+            onChange={(value, unit) => this.onChange('totalVolume', constructVolume, value, unit)}
           />
         </Form.Group>
 
@@ -217,7 +317,7 @@ class App extends React.Component {
             units={volumePerFractionUnits}
             inputDisabled={this.state.volumeNumberRadioSelection !== 'volumePerFraction'}
             validator={positiveValidator}
-            onChange={(value, unit) => this.unitNumbers.volumePerFraction = constructVolume(value, unit)}
+            onChange={(value, unit) => this.onChange('volumePerFraction', constructVolume, value, unit)}
           />
         </Form.Group>
 
@@ -236,7 +336,7 @@ class App extends React.Component {
             placeholder="Number of fractions"
             inputDisabled={this.state.volumeNumberRadioSelection !== 'numberOfFractions'}
             validator={positiveValidator}
-            onChange={(value, unit) => this.unitNumbers.numberOfFractions = constructUnitNumber(value, unit)}
+            onChange={(value, unit) => this.onChange('numberOfFractions', constructUnitNumber, value, unit)}
           />
         </Form.Group>
 
@@ -248,7 +348,8 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isConnected}
+              disabled={!isDevelopment && !isConnected}
+              onClick={this.run}
             >Run</Button>
           </Col>
           <Col>
@@ -256,7 +357,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isConnected}
+              disabled={!isDevelopment && !isConnected}
             >Pause</Button>
           </Col>
           <Col>
@@ -264,7 +365,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isConnected}
+              disabled={!isDevelopment && !isConnected}
             >Resume</Button>
           </Col>
           <Col>
@@ -272,7 +373,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isConnected}
+              disabled={!isDevelopment && !isConnected}
             >Stop</Button>
           </Col>
         </Row>
@@ -322,12 +423,13 @@ class App extends React.Component {
           position: 'absolute', left: '50%', top: '50%',
           transform: 'translate(-50%, -50%)'
         }} className="w-75">
+          {isDevelopment && <Alert variant="warning">DEVELOPMENT MODE</Alert>}
           <Row className="mb-5">
             <Col className="col-3">
               <Button
                 className="btn-block"
                 variant="primary"
-                onClick={() => isConnected ? this.disconnect() : this.connect()}
+                onClick={isConnected ? this.disconnect : this.connect}
                 disabled={!webSerialSupported || this.state.connecting}
               >{this.state.connecting
                   ? 'Connecting...'

@@ -32,13 +32,27 @@ export class UnitNumberInput extends React.Component {
       unit: null,
       invalid: null,
     }
+
+    // These are immediately updated, unlike this.state, which is updated
+    // asynchronously.
+    this.value = '';
+    this.unit = null;
+  }
+
+  setUnitNumber(unitNumber) {
+    if ((_.isNil(this.props.units) != _.isNil(unitNumber.unit)) && !_.includes(this.props.units, unitNumber.unit))
+      throw Error(`unit ${unitNumber.unit} not in ${this.props.units}`);
+    this.setState({value: unitNumber.value.toString(), unit: unitNumber.unit});
   }
 
   // Called right after component is initialized.
   // Note that this.setState() may be called here (but not in the constructor).
   // We set the unit to be the first unit in this.units for simplicity.
   componentDidMount() {
-    !_.isNil(this.props.units) && this.setState({unit: this.props.units[0]});
+    if (!_.isNil(this.props.units)) {
+      this.unit = this.props.units[0];
+      this.setState({unit: this.props.units[0]});
+    }
   }
 
   onChange(value, unit) {
@@ -54,12 +68,14 @@ export class UnitNumberInput extends React.Component {
       ? this.props.validator(floatValue)
       : null;
     _.isFunction(this.props.onValueChange) && this.props.onValueChange(floatValue);
-    this.onChange(floatValue, this.state.unit);
+    this.value = value;
     this.setState({value: value, invalid: invalid});
+    this.onChange(floatValue, this.state.unit);
   }
 
   onUnitChange(unit) {
     const floatValue = parseFloat(this.state.value);
+    this.unit = unit;
     this.setState({unit: unit});
     _.isFunction(this.props.onUnitChange) && this.props.onUnitChange(floatValue);
     this.onChange(floatValue, unit);
