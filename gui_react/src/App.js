@@ -17,6 +17,7 @@ import './bootstrap.min.css';
 import { BrowserSerial } from 'browser-serial';
 import queryString from 'query-string';
 
+import { Colosseum } from './Colosseum';
 import { NotSupportedModal, StatusInput, UnitNumberInput } from './components';
 import {
   FlowRate,
@@ -99,10 +100,10 @@ class App extends React.Component {
       timeVolumeRadioSelection: '',
       volumeNumberRadioSelection: '',
 
-      // Serial connection
-      serial: new BrowserSerial(),
+      // Connection state
       connectError: '',
       connecting: false,
+      connected: false,
 
       // State depending on Colosseum status
       status: 0,
@@ -110,6 +111,9 @@ class App extends React.Component {
       // Dev states
       devCommand: '',
     };
+
+    // Object that manages serial connection
+    this.colosseum = new Colosseum();
 
     // Values will be UnitNumber instances representing each input
     this.unitNumbers = {
@@ -147,25 +151,22 @@ class App extends React.Component {
 
   connect() {
     this.setState({connecting: true});
-    this.state.serial.connect()
-      .then(result => this.setState({connectError: ''}))
+    this.colosseum.connect()
+      .then(result => this.setState({connectError: '', connected: true}))
       .catch(error => this.setState({connectError: error.toString()}))
       .finally(() => this.setState({connecting: false}));
   }
 
   disconnect() {
-    this.setState({connecting: true});
-    this.state.serial.disconnect()
-      .then(result => this.setState({connectError: ''}))
+    this.colosseum.disconnect()
+      .then(result => this.setState({connectError: '', connected: false}))
       .catch(error => this.setState({connectError: error.toString()}))
-      .finally(() => this.setState({connecting: false}));
   }
 
-  // @Anne command is a string
   send(command) {
-    this.state.serial.write(command);
-    console.log(command);
-    console.log(this.state.serial.readLine())
+    console.log(`send ${command}`);
+    this.colosseum.send(command)
+      .then(response => console.log(`receive ${command}`));
   }
 
   update() {
@@ -179,7 +180,6 @@ class App extends React.Component {
     const unitNumber2 = this.unitNumbers[selection2];
     const targetUnit1 = this.unitNumberInputs[otherSelection1].current.unit;
     const targetUnit2 = this.unitNumberInputs[otherSelection2].current.unit;
-    console.log(targetUnit1, targetUnit2);
 
     // Check that required values exist.
     if (_.isNil(flowRate) || _.isNil(unitNumber1) || _.isNil(unitNumber2)) return;
@@ -404,7 +404,7 @@ class App extends React.Component {
           </Badge>
         </Row>
         <Row className="justify-content-center mb-4">
-          {this.state.status === 1 && (<Spinner animation="border" variant={statusVariants[this.state.status]} size="sm"/>)}
+          {this.state.status === 1 && <Spinner animation="border" variant={statusVariants[this.state.status]} size="sm"/>}
           <Badge variant={statusVariants[this.state.status]}>
             {statusTexts[this.state.status]}
           </Badge>
@@ -426,7 +426,7 @@ class App extends React.Component {
   }
 
   render() {
-    const isConnected = !_.isNil(this.state.serial.port) && this.state.connectError === '';
+    const isConnected = this.state.connected;
     return (
       <>
         <Container style={{
