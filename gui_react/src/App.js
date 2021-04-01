@@ -163,7 +163,9 @@ class App extends React.Component {
 
   // @Anne command is a string
   send(command) {
+    this.state.serial.write(command);
     console.log(command);
+    console.log(this.state.serial.readLine())
   }
 
   update() {
