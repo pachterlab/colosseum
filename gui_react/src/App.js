@@ -29,7 +29,7 @@ class App extends React.Component {
                 <a href="https://github.com/pachterlab/colosseum">pachterlab/colosseum</a>
               </Navbar.Text>
               <Navbar.Text>
-                doi: <a href="">doi?</a>
+                doi: <a href="https://doi.org/10.1101/2021.01.27.428538">10.1101/2021.01.27.428538</a>
               </Navbar.Text>
             </Navbar.Collapse>
           </Navbar>

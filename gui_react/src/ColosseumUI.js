@@ -386,7 +386,6 @@ export class ColosseumUI extends React.Component {
             name="timeVolumeRadio"
             value="totalVolume"
             checked={this.state.timeVolumeRadioSelection === 'totalVolume'}
-            validator={positiveValidator}
             onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
           />
           <UnitNumberInput
@@ -408,7 +407,6 @@ export class ColosseumUI extends React.Component {
             name="volumeNumberRadio"
             value="volumePerFraction"
             checked={this.state.volumeNumberRadioSelection === 'volumePerFraction'}
-            validator={positiveValidator}
             onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
           />
           <UnitNumberInput
@@ -428,7 +426,6 @@ export class ColosseumUI extends React.Component {
             name="volumeNumberRadio"
             value="numberOfFractions"
             checked={this.state.volumeNumberRadioSelection === 'numberOfFractions'}
-            validator={positiveValidator}
             onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
           />
           <UnitNumberInput
