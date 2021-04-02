@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { BrowserSerial } from 'browser-serial';
 
 import { sleep } from './utils';
@@ -38,13 +40,19 @@ export class Colosseum {
     this.serial = new BrowserSerial(serialOptions, serialFilters);
     // Async generator for responses. Get *promises* to lines by using next().
     this.reader = this.serial.readLine();
+    this.connected = dry;
+    this.ready = false;
     this.paused = false;
+    this.done = false;
+    this.error = false;
+    this.startTime = null;
 
     this.position = 0;
     this.numberOfFractions = null;
     // All time is in seconds.
     this.interval = null;
     this.callback = null;
+    this.doneCallback = null;
     this.errorCallback = null;
   }
 
@@ -53,12 +61,21 @@ export class Colosseum {
     await this.serial.connect();
     const response = await this.reader.next();
     if (response !== connectResponse) throw Error(`Unexpected response ${response}. Expected ${connectResponse}.`);
+    this.connected = true;
     return response;
+  }
+
+  async disconnect() {
+    if (this.dry) return;
+    if (!this.connected) throw Error('No device connected.');
+    await this.serial.disconnect();
+    this.connected = false;
   }
 
   // Send command without verifying response
   async send(command) {
     if (this.dry) return command;
+    if (!this.connected) throw Error('No device connected.');
     await this.serial.write(command);
     const response = await this.reader.next();
     return response;
@@ -71,23 +88,31 @@ export class Colosseum {
     return response;
   }
 
-  disconnect = () => !this.dry && this.serial.disconnect();
-  stop = () => this.send(stopCommand);
-
   // All times must be in milliseconds
   // Callback is a function that is called at the end of each fraction, before
   // the tube bed is rotated. It should take a single integer argument, indicating
   // the index of the tube that was just collected.
   // Run should only be called once per object.
-  setup(numberOfFractions, interval, callback=() => null, errorCallback=() => null) {
+  setup(
+    numberOfFractions,
+    interval,
+    callback=() => null,
+    errorCallback=() => null,
+    doneCallback=() => null
+  ) {
     this.interval = interval;
     this.numberOfFractions = numberOfFractions;
     this.callback = callback;
+    this.doneCallback = doneCallback;
     this.errorCallback = errorCallback;
+    this.ready = true;
   }
 
   async run() {
+    if (!this.connected) throw Error('No device connected.');
+    if (!this.ready) throw Error('Colosseum is not ready. setup() must be called.');
     if (this.position !== 0) throw Error(`position must be zero, not ${this.position}`);
+    this.startTime = Date.now();
     await this.resume();
   }
 
@@ -96,14 +121,31 @@ export class Colosseum {
   }
 
   async resume() {
+    if (!this.connected) throw Error('No device connected.');
+    if (this.error) throw Error('There was an error while running.');
+    if (_.isNil(this.startTime)) throw Error('Call run() instead of resume() at the start.');
+
     this.paused = false;
-    while (!this.paused && this.position <= this.numberOfFractions) {
+    while (!this.paused && this.position < this.numberOfFractions) {
       this.sendAndVerify(makeCommand(angles[this.position]))
         .then(() => this.callback(this.position))
-        .catch(error => this.errorCallback(this.position, error));
-
-        await sleep(this.interval);
+        .catch(error => {
+          this.error = true;
+          this.errorCallback(this.position, error);
+        });
       this.position++;
+
+      await sleep(this.interval);
     }
+
+    // Call doneCallback if we are done.
+    if (this.position >= this.numberOfFractions) {
+      this.done = true;
+      this.doneCallback();
+    }
+  }
+
+  async stop() {
+    await this.send(stopCommand);
   }
 }

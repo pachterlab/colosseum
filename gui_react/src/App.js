@@ -52,7 +52,7 @@ const constructTime = (value, unit) => constructUnitNumberFactory(Time, value, u
 const constructVolume = (value, unit) => constructUnitNumberFactory(Volume, value, unit);
 const constructUnitNumber = (value, unit) => constructUnitNumberFactory(UnitNumber, value, unit);
 
-const integerValidator = value => Number.isInteger(value) ? null : 'Number must be an integer.';
+const integerValidator = value => _.isInteger(value) ? null : 'Number must be an integer.';
 const positiveValidator = value => value > 0 ? null : 'Number must be positive.';
 
 // Some configurations. Should these be in a separate file?
@@ -114,6 +114,7 @@ class App extends React.Component {
 
     // Object that manages serial connection
     this.colosseum = new Colosseum(isDevelopment);
+    this.monitorInterval = null;
 
     // Values will be UnitNumber instances representing each input
     this.unitNumbers = {
@@ -152,6 +153,7 @@ class App extends React.Component {
     this.resume = this.resume.bind(this);
     this.stop = this.stop.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.monitor = this.monitor.bind(this);
   }
 
   connect() {
@@ -172,6 +174,30 @@ class App extends React.Component {
     console.log(`send ${command}`);
     this.colosseum.send(command)
       .then(response => console.log(`receive ${command}`));
+  }
+
+  // Monitors the internal Colosseum variable and updates the volume dispensed and
+  // time elapsed.
+  monitor() {
+    // Don't schedule any more if done or error.
+    if (this.colosseum.done || this.colosseum.error) {
+      clearInterval(this.monitorInterval);
+      return;
+    }
+
+    const timeElapsed = new Time(Date.now() - this.colosseum.startTime, 'ms').convert('sec');
+    const timeUnit = this.unitNumbers.totalTime.unit;
+    const volumeDispensed = new Volume(
+      this.unitNumbers.flowRate.convert('uL/sec').value * timeElapsed.value, 'uL'
+    );
+    const volumeUnit = this.unitNumbers.totalVolume.unit;
+
+    this.statusInputs.volumeDispensed.current.setState({
+      value: volumeDispensed.convert(volumeUnit).toString(3)
+    });
+    this.statusInputs.timeElapsed.current.setState({
+      value: timeElapsed.convert(timeUnit).toString(3)
+    });
   }
 
   update() {
@@ -219,6 +245,7 @@ class App extends React.Component {
       );
       this.colosseum.run();
       this.setState({state: 1});
+      this.monitorInterval = setInterval(this.monitor, 100);
     }
   }
 

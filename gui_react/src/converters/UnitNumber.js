@@ -51,5 +51,8 @@ export class UnitNumber {
       this.conversionFactors[this.unit][unit] * this.value, unit
     );
   }
-  toString = () => _.isNil(this.unit) ? `${this.value}` : `${this.value} ${this.unit}`
+  toString(places=null) {
+    const value = _.isInteger(places) && places > 0 ? this.value.toFixed(places) : this.value;
+    return _.isNil(this.unit) ? `${value}` : `${value} ${this.unit}`;
+  }
 }
