@@ -9,8 +9,8 @@ import {
   Dropdown,
   Form,
   OverlayTrigger,
+  ProgressBar,
   Row,
-  Spinner,
 } from 'react-bootstrap';
 import './bootstrap.min.css';
 
@@ -57,7 +57,9 @@ const positiveValidator = value => value > 0 ? null : 'Number must be positive.'
 
 // Some configurations. Should these be in a separate file?
 const webSerialSupported = 'serial' in navigator;
-const isDevelopment = _.has(queryString.parse(window.location.search), 'dev');
+const urlParams = queryString.parse(window.location.search);
+const isDevelopment = _.has(urlParams, 'dev');
+const isConnected = _.has(urlParams, 'connected');
 const statusTexts = {
   0: 'Not running',
   1: 'Running',
@@ -103,10 +105,12 @@ class App extends React.Component {
       // Connection state
       connectError: '',
       connecting: false,
-      connected: false,
+      connected: isDevelopment && isConnected,
 
       // State depending on Colosseum status
       status: 0,
+      statusError: '',
+      progress: 0,
 
       // Dev states
       devCommand: '',
@@ -241,28 +245,36 @@ class App extends React.Component {
       this.colosseum.setup(
         this.unitNumbers.numberOfFractions.value,
         1000,
-        position => this.statusInputs.tubeNumber.current.setState({value: position})
+        position => {
+          this.statusInputs.tubeNumber.current.setState({value: position});
+          this.setState({progress: (position / this.unitNumbers.numberOfFractions.value) * 100});
+        },
+        (position, error) => this.setState({
+          statusError: `Error at position ${position}: ${error.toString()}`,
+          status: 5,
+        }),
+        () => this.setState({status: 4})
       );
       this.colosseum.run();
-      this.setState({state: 1});
+      this.setState({status: 1});
       this.monitorInterval = setInterval(this.monitor, 100);
     }
   }
 
   pause() {
     this.colosseum.pause();
-    this.setState({state: 2});
+    this.setState({status: 2});
   }
 
   resume() {
     this.colosseum.resume();
-    this.setState({state: 1});
+    this.setState({status: 1});
   }
 
   // Stopping is the same as pausing, but without the option to restart.
   stop() {
     this.colosseum.stop();
-    this.setState({state: 3});
+    this.setState({status: 3});
   }
 
   onChange(key, factory, value, unit, update=true) {
@@ -402,7 +414,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isDevelopment && (!isConnected || !_.includes([0, 2], this.state.status))}
+              disabled={!isConnected || !_.includes([0, 2], this.state.status)}
               onClick={this.run}
             >Run</Button>
           </Col>
@@ -447,15 +459,24 @@ class App extends React.Component {
             {isConnected ? 'Connected' : 'Disconnnected'}
           </Badge>
         </Row>
-        <Row className="justify-content-center mb-4">
-          {this.state.status === 1 && <Spinner animation="border" variant={statusVariants[this.state.status]} size="sm"/>}
+        <Row className="justify-content-center mb-1">
           <Badge variant={statusVariants[this.state.status]}>
             {statusTexts[this.state.status]}
           </Badge>
         </Row>
+        <ProgressBar
+          className="mb-4"
+          variant={statusVariants[this.state.status]}
+          now={this.state.progress}
+          animated={this.state.progress < 100}
+          label={`${_.floor(this.state.progress)}%`}
+        />
         <StatusInput ref={this.statusInputs.volumeDispensed} label="Volume Dispensed" />
         <StatusInput ref={this.statusInputs.timeElapsed} label="Time Elapsed" />
         <StatusInput ref={this.statusInputs.tubeNumber} label="Tube Number" />
+        <Row>
+          <Col style={{color: 'red'}}>{this.state.statusError}</Col>
+        </Row>
       </Container>
     );
   }

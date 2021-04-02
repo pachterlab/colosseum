@@ -52,7 +52,7 @@ export class UnitNumber {
     );
   }
   toString(places=null) {
-    const value = _.isInteger(places) && places > 0 ? this.value.toFixed(places) : this.value;
+    const value = _.isInteger(places) && places > 0 ? _.floor(this.value, places) : this.value;
     return _.isNil(this.unit) ? `${value}` : `${value} ${this.unit}`;
   }
 }
