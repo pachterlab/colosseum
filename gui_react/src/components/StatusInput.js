@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Row, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 
 export class StatusInput extends React.Component {
   static propTypes = {

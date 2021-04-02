@@ -3,7 +3,7 @@
  * Function names are based on which values are provided.
  * First argument is always flow rate.
  */
-import { FlowRate, Time, Tube, Volume, UnitNumber } from './';
+import { Time, Volume, UnitNumber } from './';
 
 // Define units that each number MUST be in before calculation.
 const _flowRateUnit = 'uL/sec';

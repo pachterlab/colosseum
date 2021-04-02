@@ -93,18 +93,23 @@ export class Colosseum {
   // the tube bed is rotated. It should take a single integer argument, indicating
   // the index of the tube that was just collected.
   // Run should only be called once per object.
-  setup(
+  async setup(
     numberOfFractions,
     interval,
     callback=() => null,
     errorCallback=() => null,
     doneCallback=() => null
   ) {
+    if (!this.connected) throw Error('No device connected.');
     this.interval = interval;
     this.numberOfFractions = numberOfFractions;
     this.callback = callback;
     this.doneCallback = doneCallback;
     this.errorCallback = errorCallback;
+
+    // Send setup commands
+    for (const command of setupCommands) await this.sendAndVerify(command);
+
     this.ready = true;
   }
 

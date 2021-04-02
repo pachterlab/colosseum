@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Col, Dropdown, Row, Form } from 'react-bootstrap';
+import { Col, Dropdown, Form } from 'react-bootstrap';
 
 const allowedChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
 /*
@@ -37,12 +37,23 @@ export class UnitNumberInput extends React.Component {
     // asynchronously.
     this.value = '';
     this.unit = null;
+    this.invalid = null;
   }
 
   setUnitNumber(unitNumber) {
-    if ((_.isNil(this.props.units) != _.isNil(unitNumber.unit)) && !_.includes(this.props.units, unitNumber.unit))
+    if ((_.isNil(this.props.units) !== _.isNil(unitNumber.unit)) && !_.includes(this.props.units, unitNumber.unit))
       throw Error(`unit ${unitNumber.unit} not in ${this.props.units}`);
-    this.setState({value: unitNumber.value.toString(), unit: unitNumber.unit});
+    const invalid = _.isFunction(this.props.validator) && !_.isNaN(unitNumber.value)
+      ? this.props.validator(unitNumber.value)
+      : null;
+    this.value = unitNumber.value;
+    this.unit = unitNumber.unit;
+    this.invalid = invalid;
+    this.setState({
+      value: _.isNaN(unitNumber.value) ? '' : unitNumber.value.toString(),
+      unit: unitNumber.unit,
+      invalid: invalid,
+    });
   }
 
   // Called right after component is initialized.
@@ -69,6 +80,7 @@ export class UnitNumberInput extends React.Component {
       : null;
     _.isFunction(this.props.onValueChange) && this.props.onValueChange(floatValue);
     this.value = value;
+    this.invalid = invalid;
     this.setState({value: value, invalid: invalid});
     this.onChange(floatValue, this.state.unit);
   }

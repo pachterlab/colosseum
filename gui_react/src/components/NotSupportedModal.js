@@ -1,8 +1,8 @@
 import React from 'react';
 import { Col, Row, Modal, Button } from 'react-bootstrap';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 export class NotSupportedModal extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ export class NotSupportedModal extends React.Component {
       <Modal show={this.state.show} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title>
-            <FontAwesomeIcon icon={faExclamationTriangle}></FontAwesomeIcon>
+            <FontAwesomeIcon icon={faExclamationTriangle} />
             Web Serial API Not Found
           </Modal.Title>
         </Modal.Header>
