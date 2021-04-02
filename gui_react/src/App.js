@@ -113,7 +113,7 @@ class App extends React.Component {
     };
 
     // Object that manages serial connection
-    this.colosseum = new Colosseum();
+    this.colosseum = new Colosseum(isDevelopment);
 
     // Values will be UnitNumber instances representing each input
     this.unitNumbers = {
@@ -134,6 +134,11 @@ class App extends React.Component {
       totalVolume: React.createRef(),
       volumePerFraction: React.createRef(),
       numberOfFractions: React.createRef(),
+    };
+    this.statusInputs = {
+      volumeDispensed: React.createRef(),
+      timeElapsed: React.createRef(),
+      tubeNumber: React.createRef(),
     };
 
     // Bind functions
@@ -188,6 +193,7 @@ class App extends React.Component {
       flowRate, unitNumber1, unitNumber2, targetUnit1, targetUnit2
     );
     _.forEach(calculated, (value, key) => {
+      this.unitNumbers[key] = value;
       this.unitNumberInputs[key].current.setUnitNumber(value);
     });
   }
@@ -205,19 +211,31 @@ class App extends React.Component {
   }
 
   run() {
-    this.validate();
+    if (this.validate()) {
+      this.colosseum.setup(
+        this.unitNumbers.numberOfFractions.value,
+        1000,
+        position => this.statusInputs.tubeNumber.current.setState({value: position})
+      );
+      this.colosseum.run();
+      this.setState({state: 1});
+    }
   }
 
   pause() {
-
+    this.colosseum.pause();
+    this.setState({state: 2});
   }
 
   resume() {
-
+    this.colosseum.resume();
+    this.setState({state: 1});
   }
 
+  // Stopping is the same as pausing, but without the option to restart.
   stop() {
-
+    this.colosseum.stop();
+    this.setState({state: 3});
   }
 
   onChange(key, factory, value, unit, update=true) {
@@ -293,7 +311,6 @@ class App extends React.Component {
             type="radio"
             name="timeVolumeRadio"
             value="totalVolume"
-            onChange={() => console.log("2")}
             checked={this.state.timeVolumeRadioSelection === 'totalVolume'}
             validator={positiveValidator}
             onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
@@ -358,7 +375,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isDevelopment && !isConnected}
+              disabled={!isDevelopment && (!isConnected || !_.includes([0, 2], this.state.status))}
               onClick={this.run}
             >Run</Button>
           </Col>
@@ -367,7 +384,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isDevelopment && !isConnected}
+              disabled={this.state.status !== 1}
             >Pause</Button>
           </Col>
           <Col>
@@ -375,7 +392,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isDevelopment && !isConnected}
+              disabled={this.state.status !== 2}
             >Resume</Button>
           </Col>
           <Col>
@@ -383,7 +400,7 @@ class App extends React.Component {
               variant="primary"
               className="btn-block"
               size="sm"
-              disabled={!isDevelopment && !isConnected}
+              disabled={!_.includes([1, 2], this.state.status)}
             >Stop</Button>
           </Col>
         </Row>
@@ -409,9 +426,9 @@ class App extends React.Component {
             {statusTexts[this.state.status]}
           </Badge>
         </Row>
-        <StatusInput label="Volume Dispensed" />
-        <StatusInput label="Time Elapsed" />
-        <StatusInput label="Tube Number" />
+        <StatusInput ref={this.statusInputs.volumeDispensed} label="Volume Dispensed" />
+        <StatusInput ref={this.statusInputs.timeElapsed} label="Time Elapsed" />
+        <StatusInput ref={this.statusInputs.tubeNumber} label="Tube Number" />
       </Container>
     );
   }

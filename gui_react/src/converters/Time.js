@@ -2,15 +2,23 @@ import { UnitNumber } from './UnitNumber';
 
 const units = ['sec', 'min', 'hr'];
 const conversionFactors = {
+  'ms' : {
+    'sec': 1000,
+    'min': 1000 * 60,
+    'hr' : 1000 * 3600
+  },
   'sec' : {
-    'min' : 1/60,
-    'hr'  : 1/3600
+    'ms'  : 1000,
+    'min' : 1 / 60,
+    'hr'  : 1 / 3600
   },
   'min' : {
+    'ms'  : 60 * 1000,
     'sec' : 60,
-    'hr'  : 1/60
+    'hr'  : 1 / 60
   },
   'hr' : {
+    'ms'  : 3600 * 1000,
     'sec' : 3600,
     'min' : 60
   }
