@@ -122,7 +122,7 @@ export class ColosseumUI extends React.Component {
     };
 
     // Object that manages serial connection
-    this.colosseum = new Colosseum(this.props.development);
+    this.colosseum = new Colosseum(this.props.development && this.props.connected);
     this.monitorInterval = null;
 
     // Values will be UnitNumber instances representing each input
