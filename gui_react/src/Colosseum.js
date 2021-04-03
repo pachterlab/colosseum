@@ -43,6 +43,7 @@ export class Colosseum {
     this.connected = dry;
     this.ready = false;
     this.paused = false;
+    this.stopped = false;
     this.done = false;
     this.error = false;
     this.startTime = null;
@@ -129,6 +130,7 @@ export class Colosseum {
     if (!this.connected) throw Error('No device connected.');
     if (this.error) throw Error('There was an error while running.');
     if (_.isNil(this.startTime)) throw Error('Call run() instead of resume() at the start.');
+    if (this.stopped) throw Error('Device was stopped.');
 
     this.paused = false;
     while (!this.paused && this.position < this.numberOfFractions) {
@@ -151,6 +153,8 @@ export class Colosseum {
   }
 
   async stop() {
+    this.paused = true;
+    this.stopped = true;
     await this.send(stopCommand);
   }
 }

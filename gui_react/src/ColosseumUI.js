@@ -189,7 +189,7 @@ export class ColosseumUI extends React.Component {
   // time elapsed.
   monitor() {
     // Don't schedule any more if done or error.
-    if (this.colosseum.done || this.colosseum.error) {
+    if (this.colosseum.done || this.colosseum.error || this.colosseum.stopped) {
       clearInterval(this.monitorInterval);
       return;
     }
@@ -310,6 +310,7 @@ export class ColosseumUI extends React.Component {
   stop() {
     this.colosseum.stop();
     this.setState({status: 3});
+
   }
 
   onChange(key, factory, value, unit, update=true) {
@@ -461,6 +462,7 @@ export class ColosseumUI extends React.Component {
               className="btn-block"
               size="sm"
               disabled={this.state.status !== 1}
+              onClick={this.pause}
             >Pause</Button>
           </Col>
           <Col>
@@ -469,6 +471,7 @@ export class ColosseumUI extends React.Component {
               className="btn-block"
               size="sm"
               disabled={this.state.status !== 2}
+              onClick={this.resume}
             >Resume</Button>
           </Col>
           <Col>
@@ -477,6 +480,7 @@ export class ColosseumUI extends React.Component {
               className="btn-block"
               size="sm"
               disabled={!_.includes([1, 2], this.state.status)}
+              onClick={this.stop}
             >Stop</Button>
           </Col>
         </Row>
