@@ -6,7 +6,7 @@ import { sleep } from './utils';
 
 // Options for the serial connection.
 const serialOptions = {
-  baudRate: 115200,
+  baudRate: 2000000,
   dataBits: 8,
   stopBits: 1,
   parity: 'none',
@@ -16,7 +16,7 @@ const serialOptions = {
 // Applying this filter will show only Arduinos in the serial device
 // selection.
 const serialFilters = { usbVendorId: 0x2341 };
-const connectResponse = 'Arduino is ready';
+const connectResponse = '<Arduino is ready>';
 const setupCommands = [
   '<SET_ACCEL,111,1000.0,1000.0,1000.0>',
   '<SET_SPEED,111,1000.0,1000.0,1000.0>'
@@ -60,7 +60,7 @@ export class Colosseum {
   async connect() {
     if (this.dry) return connectResponse;
     await this.serial.connect();
-    const response = await this.reader.next();
+    const { response, done } = await this.reader.next();
     if (response !== connectResponse) throw Error(`Unexpected response ${response}. Expected ${connectResponse}.`);
     this.connected = true;
     return response;
@@ -78,7 +78,7 @@ export class Colosseum {
     if (this.dry) return command;
     if (!this.connected) throw Error('No device connected.');
     await this.serial.write(command);
-    const response = await this.reader.next();
+    const { response, done } = await this.reader.next();
     return response;
   }
 
