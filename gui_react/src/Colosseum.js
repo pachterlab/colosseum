@@ -6,7 +6,7 @@ import { sleep } from './utils';
 
 // Options for the serial connection.
 const serialOptions = {
-  baudRate: 2000000,
+  baudRate: 115200,
   dataBits: 8,
   stopBits: 1,
   parity: 'none',
@@ -39,7 +39,7 @@ export class Colosseum {
     this.dry = dry;
     this.serial = new BrowserSerial(serialOptions, serialFilters);
     // Async generator for responses. Get *promises* to lines by using next().
-    this.reader = this.serial.readLine();
+    this.reader = this.serial.readLineGenerator();
     this.connected = dry;
     this.ready = false;
     this.paused = false;
