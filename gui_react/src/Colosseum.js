@@ -33,14 +33,14 @@ const angles = [
   24, 24, 24, 24, 23, 23, 23, 23, 23, 23, 22, 22, 22, 22, 22, 22, 22, 22, 21, 21,
   21, 21, 21, 21, 21, 20, 20
 ];
-const commandRegex = /<(?<setting>[^,]+),(?<selection>\d+),(?<value1>[\d.]+),(?<value2>[\d.]+),(?<value3>[\d.]+)>/g;
+const commandRegex = /[^<>,]+/g;
 
 // Utility function to validate responses.
 // Simply checks whether the setting string is the same.
 function responseIsValid(command, response) {
-  const commandMatch = commandRegex.exec(command);
-  const responseMatch = commandRegex.exec(response);
-  return commandMatch.groups.setting === responseMatch.groups.setting;
+  const commandMatch = command.match(commandRegex)[0];
+  const responseMatch = response.match(commandRegex)[0];
+  return commandMatch === responseMatch;
 }
 
 
@@ -144,7 +144,7 @@ export class Colosseum {
     if (this.stopped) throw Error('Device was stopped.');
 
     this.paused = false;
-    while (!this.paused && this.position < this.numberOfFractions) {
+    while (!this.paused && this.position < this.numberOfFractions && !this.error) {
       this.sendAndVerify(makeCommand(angles[this.position]))
         .then(() => this.callback(this.position))
         .catch(error => {
