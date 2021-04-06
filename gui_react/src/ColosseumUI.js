@@ -334,6 +334,7 @@ export class ColosseumUI extends React.Component {
 
   // Call this function in render() to display input container.
   renderInputs(isConnected) {
+    const disableInputs = this.state.status > 0;
     return (
       <Container>
         <Form.Group as={Row}>
@@ -342,7 +343,7 @@ export class ColosseumUI extends React.Component {
             label="Number of Tubes (excluding tube 0)"
             placeholder="# tubes"
             units={tubeUnits}
-            inputDisabled={false}
+            disabled={disableInputs}
             validator={value => integerValidator(value) || positiveValidator(value)}
             onChange={(value, unit) => this.onChange('numberOfTubes', constructTube, value, unit, false)}
           />
@@ -354,7 +355,7 @@ export class ColosseumUI extends React.Component {
             label="Flow rate"
             placeholder="Flow rate"
             units={flowRateUnits}
-            inputDisabled={false}
+            disabled={disableInputs}
             validator={positiveValidator}
             onChange={(value, unit) => this.onChange('flowRate', constructFlowRate, value, unit)}
           />
@@ -368,6 +369,7 @@ export class ColosseumUI extends React.Component {
             name="timeVolumeRadio"
             value="totalTime"
             checked={this.state.timeVolumeRadioSelection === 'totalTime'}
+            disabled={this.state.status > 0}
             onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
           />
           <UnitNumberInput
@@ -375,7 +377,7 @@ export class ColosseumUI extends React.Component {
             label="Total time"
             placeholder="Total time"
             units={totalTimeUnits}
-            inputDisabled={this.state.timeVolumeRadioSelection !== 'totalTime'}
+            disabled={this.state.timeVolumeRadioSelection !== 'totalTime' || disableInputs}
             validator={positiveValidator}
             onChange={(value, unit) => this.onChange('totalTime', constructTime, value, unit)}
           />
@@ -387,6 +389,7 @@ export class ColosseumUI extends React.Component {
             name="timeVolumeRadio"
             value="totalVolume"
             checked={this.state.timeVolumeRadioSelection === 'totalVolume'}
+            disabled={disableInputs}
             onChange={event => this.setState({timeVolumeRadioSelection: event.target.value})}
           />
           <UnitNumberInput
@@ -394,7 +397,7 @@ export class ColosseumUI extends React.Component {
             label="Total volume"
             placeholder="Total volume"
             units={totalVolumeUnits}
-            inputDisabled={this.state.timeVolumeRadioSelection !== 'totalVolume'}
+            disabled={this.state.timeVolumeRadioSelection !== 'totalVolume' || disableInputs}
             validator={positiveValidator}
             onChange={(value, unit) => this.onChange('totalVolume', constructVolume, value, unit)}
           />
@@ -408,6 +411,7 @@ export class ColosseumUI extends React.Component {
             name="volumeNumberRadio"
             value="volumePerFraction"
             checked={this.state.volumeNumberRadioSelection === 'volumePerFraction'}
+            disabled={disableInputs}
             onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
           />
           <UnitNumberInput
@@ -415,7 +419,7 @@ export class ColosseumUI extends React.Component {
             label="Volume per fraction"
             placeholder="Volume per fraction"
             units={volumePerFractionUnits}
-            inputDisabled={this.state.volumeNumberRadioSelection !== 'volumePerFraction'}
+            disabled={this.state.volumeNumberRadioSelection !== 'volumePerFraction' || disableInputs}
             validator={positiveValidator}
             onChange={(value, unit) => this.onChange('volumePerFraction', constructVolume, value, unit)}
           />
@@ -427,13 +431,14 @@ export class ColosseumUI extends React.Component {
             name="volumeNumberRadio"
             value="numberOfFractions"
             checked={this.state.volumeNumberRadioSelection === 'numberOfFractions'}
+            disabled={disableInputs}
             onChange={event => this.setState({volumeNumberRadioSelection: event.target.value})}
           />
           <UnitNumberInput
             ref={this.unitNumberInputs.numberOfFractions}
             label="Number of fractions"
             placeholder="Number of fractions"
-            inputDisabled={this.state.volumeNumberRadioSelection !== 'numberOfFractions'}
+            disabled={this.state.volumeNumberRadioSelection !== 'numberOfFractions' || disableInputs}
             validator={value => integerValidator(value) || positiveValidator(value)}
             onChange={(value, unit) => this.onChange('numberOfFractions', constructUnitNumber, value, unit)}
           />

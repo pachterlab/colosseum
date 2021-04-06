@@ -13,6 +13,7 @@ export class UnitNumberInput extends React.Component {
     label: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
     units: PropTypes.arrayOf(PropTypes.string),
+    disabled: PropTypes.bool,
     inputDisabled: PropTypes.bool,
     dropdownDisabled: PropTypes.bool,
     onChange: PropTypes.func,
@@ -94,11 +95,13 @@ export class UnitNumberInput extends React.Component {
   }
 
   render() {
+    const inputDisabled = this.props.inputDisabled || this.props.disabled;
+    const dropdownDisabled = this.props.dropdownDisabled || this.props.disabled;
     return (
       <>
         <Col className="col-3">
           <Form.Label
-            className={this.props.inputDisabled && 'text-muted'}
+            className={inputDisabled && 'text-muted'}
           >
             {this.props.label}
           </Form.Label>
@@ -108,7 +111,7 @@ export class UnitNumberInput extends React.Component {
             placeholder={this.props.placeholder}
             value={this.state.value}
             onChange={event => this.onValueChange(event.target.value)}
-            readOnly={this.props.inputDisabled}
+            readOnly={inputDisabled}
             isInvalid={!_.isNil(this.state.invalid)}
           />
           <Form.Control.Feedback type="invalid">
@@ -121,7 +124,7 @@ export class UnitNumberInput extends React.Component {
               <Dropdown.Toggle
                 variant="outline-primary"
                 className="w-100"
-                disabled={this.props.dropdownDisabled}
+                disabled={dropdownDisabled}
               >
                 {this.state.unit || 'Unit'}
               </Dropdown.Toggle>

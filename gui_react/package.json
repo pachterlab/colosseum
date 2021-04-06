@@ -11,7 +11,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "bootstrap": "^4.6.0",
-    "browser-serial": "^1.0.5",
+    "browser-serial": "^1.0.6",
     "lodash": "^4.17.21",
     "query-string": "^7.0.0",
     "react": "^17.0.1",

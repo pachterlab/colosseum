@@ -72,7 +72,10 @@ export class Colosseum {
     await this.serial.connect();
     const response = await this.reader.next();
     const value = response.value.value;
-    if (value !== connectResponse) throw Error(`Unexpected response ${value}. Expected ${connectResponse}.`);
+    if (value !== connectResponse) throw Error(
+      `Unexpected response ${value}. Expected ${connectResponse}.
+      Is the Arduino flashed with the correct firmware?`
+    );
     this.connected = true;
     return value;
   }
