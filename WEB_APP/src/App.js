@@ -17,6 +17,10 @@ const isDevelopment = _.has(urlParams, 'dev');
 const isConnected = _.has(urlParams, 'connected');
 
 class App extends React.Component {
+  componentDidMount() {
+    document.title = 'Colosseum UI';
+  }
+
   render() {
     return (
       <>
