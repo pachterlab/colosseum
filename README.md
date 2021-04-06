@@ -60,6 +60,8 @@ The print parameter for these parts are as follows:
 ### Building colosseum
 [This video](https://youtu.be/yG7ECh5GO0o) will guide you through the building process of colosseum.
 
+There is also a [step-by-step guide](https://www.protocols.io/private/C715264790E411EBAAD90A58A9FEAC02) of the assembly.
+
 Here are the steps for building colosseum:
 1. 3D print components.
 2. Attach set screws to the tube bed.
