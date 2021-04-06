@@ -20,7 +20,7 @@ const connectResponse = '<Arduino is ready>';
 const setupCommands = [
   '<SET_ACCEL,111,1000.0,1000.0,1000.0>',
   '<SET_SPEED,111,1000.0,1000.0,1000.0>'
-]
+];
 const stopCommand = '<STOP,111,0.0,0.0,0.0>';
 const makeCommand = angle => `<RUN,111,${angle},${angle},${angle}>`;
 // Hardcoded angles for now.
@@ -33,6 +33,16 @@ const angles = [
   24, 24, 24, 24, 23, 23, 23, 23, 23, 23, 22, 22, 22, 22, 22, 22, 22, 22, 21, 21,
   21, 21, 21, 21, 21, 20, 20
 ];
+const commandRegex = /<(?<setting>[^,]+),(?<selection>\d+),(?<value1>[\d.]+),(?<value2>[\d.]+),(?<value3>[\d.]+)>/g;
+
+// Utility function to validate responses.
+// Simply checks whether the setting string is the same.
+function responseIsValid(command, response) {
+  const commandMatch = commandRegex.exec(command);
+  const responseMatch = commandRegex.exec(response);
+  return commandMatch.groups.setting === responseMatch.groups.setting;
+}
+
 
 export class Colosseum {
   constructor(dry=false) {
@@ -60,10 +70,11 @@ export class Colosseum {
   async connect() {
     if (this.dry) return connectResponse;
     await this.serial.connect();
-    const { response, done } = await this.reader.next();
-    if (response !== connectResponse) throw Error(`Unexpected response ${response}. Expected ${connectResponse}.`);
+    const response = await this.reader.next();
+    const value = response.value.value;
+    if (value !== connectResponse) throw Error(`Unexpected response ${value}. Expected ${connectResponse}.`);
     this.connected = true;
-    return response;
+    return value;
   }
 
   async disconnect() {
@@ -78,15 +89,15 @@ export class Colosseum {
     if (this.dry) return command;
     if (!this.connected) throw Error('No device connected.');
     await this.serial.write(command);
-    const { response, done } = await this.reader.next();
-    return response;
+    const response = await this.reader.next();
+    return response.value.value;
   }
 
   // Send command and verify response
   async sendAndVerify(command) {
-    const response = await this.send(command);
-    if (response !== command) throw Error(`Unexpected response ${response}. Expected ${command}.`)
-    return response;
+    const value = await this.send(command);
+    if (!responseIsValid(command, value)) throw Error(`Unexpected response ${value}. Expected ${command}.`)
+    return value;
   }
 
   // All times must be in milliseconds
