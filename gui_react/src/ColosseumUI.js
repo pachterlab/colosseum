@@ -25,6 +25,7 @@ import {
   UnitNumber,
   Volume,
 } from './converters';
+import { promiseTimeout } from './utils';
 
 /*
  * These arrays define what units to *display* (not what unit conversions are

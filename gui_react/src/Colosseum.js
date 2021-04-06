@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { BrowserSerial } from 'browser-serial';
 
-import { sleep } from './utils';
+import { promiseTimeout, sleep } from './utils';
 
 // Options for the serial connection.
 const serialOptions = {
@@ -16,6 +16,8 @@ const serialOptions = {
 // Applying this filter will show only Arduinos in the serial device
 // selection.
 const serialFilters = { usbVendorId: 0x2341 };
+// Throw an error if there is no serial response after waiting this much milliseconds.
+const serialTimeout = 5000;
 const connectResponse = '<Arduino is ready>';
 const setupCommands = [
   '<SET_ACCEL,111,1000.0,1000.0,1000.0>',
@@ -60,14 +62,13 @@ export class Colosseum {
 
     this.position = 0;
     this.numberOfFractions = null;
-    // All time is in seconds.
     this.interval = null;
     this.callback = null;
     this.doneCallback = null;
     this.errorCallback = null;
   }
 
-  async connect() {
+  async _connect() {
     if (this.dry) return connectResponse;
     await this.serial.connect();
     const response = await this.reader.next();
@@ -79,22 +80,25 @@ export class Colosseum {
     this.connected = true;
     return value;
   }
+  connect = () => promiseTimeout(this._connect(), serialTimeout, 'Connection timed out.');
 
-  async disconnect() {
+  async _disconnect() {
     if (this.dry) return;
     if (!this.connected) throw Error('No device connected.');
     await this.serial.disconnect();
     this.connected = false;
   }
+  disconnect = () => promiseTimeout(this._disconnect(), serialTimeout, 'Disconnection timed out.');
 
   // Send command without verifying response
-  async send(command) {
+  async _send(command) {
     if (this.dry) return command;
     if (!this.connected) throw Error('No device connected.');
     await this.serial.write(command);
     const response = await this.reader.next();
     return response.value.value;
   }
+  send = (command) => promiseTimeout(this._send(command), serialTimeout, `Command ${command} timed out.`);
 
   // Send command and verify response
   async sendAndVerify(command) {
