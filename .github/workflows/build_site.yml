@@ -34,7 +34,7 @@ jobs:
         run: yarn build
         
       - name: move site to site repo
-        run: mv build ../site_bundle
+        run: mv build ../docs
         
       - name: Commit and push if it changed
         run: |-
