@@ -33,14 +33,8 @@ jobs:
       - name: Build
         run: cd WEB_APP && npm run deploy && cd ..
         
-      - name: move site to site repo
-        run: cd WEB_APP && rm -rf ../docs && mv build ../docs
-        
-      - name: Commit and push if it changed
-        run: |-
-          git config user.name "Automated"
-          git config user.email "actions@users.noreply.github.com"
-          git add -f docs/
-          timestamp=$(date -u)
-          git commit -m "Rebuilt site: ${timestamp}" || exit 0
-          git push 
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: WEB_APP/build
