@@ -1,5 +1,7 @@
 # colosseum: open source fraction collector
 
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
 <p>A modular, highly customizable, open source fraction collector.</p>
 
 <p align="center">
