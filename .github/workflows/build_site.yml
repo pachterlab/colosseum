@@ -31,7 +31,7 @@ jobs:
         run: cd WEB_APP && yarn install && cd ..
       
       - name: Build
-        run: cd WEB_APP && npm run deploy && cd ..
+        run: cd WEB_APP && yarn build
         
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
