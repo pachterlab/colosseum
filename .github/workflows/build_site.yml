@@ -28,13 +28,13 @@ jobs:
         uses: actions/setup-node@v2.1.5
 
       - name: Install dependencies
-        run: yarn install
+        run: cd WEB_APP && yarn install && cd ..
       
       - name: Build
-        run: npm run deploy
+        run: cd WEB_APP && npm run deploy && cd ..
         
       - name: move site to site repo
-        run: rm -rf ../docs && mv build ../docs
+        run: cd WEB_APP && rm -rf ../docs && mv build ../docs
         
       - name: Commit and push if it changed
         run: |-
