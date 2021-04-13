@@ -90,7 +90,9 @@ The fraction collector is driven by an Arduino board that interprets commands se
 We recommend that you wrap wires in [cable wraps](https://www.amazon.com/dp/B07FW3GTXB/ref=cm_sw_r_tw_dp_fq83Fb2VRK9QQ?_x_encoding=UTF8&psc=1) and placing your Arduino+CNC shield in a case like [this](https://www.thingiverse.com/thing:3125495).
 
 ## Installing software
-The graphical user interface (GUI) is located in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
+You can run colosseum on a web-browser by going to this link: https://pachterlab.github.io/colosseum/. Running colosseum on the browser platform will not require you to install any software.
+
+To run colosseum locally, you can find the GUI script in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
 
 <p align="center">
   <img src="SOFTWARE/ui_screenshot.PNG">
