@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.d0285310.chunk.css",
-    "main.js": "/static/js/main.26d37679.chunk.js",
-    "main.js.map": "/static/js/main.26d37679.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.7d065cf3.js",
-    "runtime-main.js.map": "/static/js/runtime-main.7d065cf3.js.map",
-    "static/js/2.2ca6d39d.chunk.js": "/static/js/2.2ca6d39d.chunk.js",
-    "static/js/2.2ca6d39d.chunk.js.map": "/static/js/2.2ca6d39d.chunk.js.map",
-    "static/js/3.c66a42cd.chunk.js": "/static/js/3.c66a42cd.chunk.js",
-    "static/js/3.c66a42cd.chunk.js.map": "/static/js/3.c66a42cd.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.d0285310.chunk.css.map": "/static/css/main.d0285310.chunk.css.map",
-    "static/js/2.2ca6d39d.chunk.js.LICENSE.txt": "/static/js/2.2ca6d39d.chunk.js.LICENSE.txt"
+    "main.css": "/colosseum/static/css/main.d0285310.chunk.css",
+    "main.js": "/colosseum/static/js/main.26d37679.chunk.js",
+    "main.js.map": "/colosseum/static/js/main.26d37679.chunk.js.map",
+    "runtime-main.js": "/colosseum/static/js/runtime-main.fe8c845d.js",
+    "runtime-main.js.map": "/colosseum/static/js/runtime-main.fe8c845d.js.map",
+    "static/js/2.2ca6d39d.chunk.js": "/colosseum/static/js/2.2ca6d39d.chunk.js",
+    "static/js/2.2ca6d39d.chunk.js.map": "/colosseum/static/js/2.2ca6d39d.chunk.js.map",
+    "static/js/3.c66a42cd.chunk.js": "/colosseum/static/js/3.c66a42cd.chunk.js",
+    "static/js/3.c66a42cd.chunk.js.map": "/colosseum/static/js/3.c66a42cd.chunk.js.map",
+    "index.html": "/colosseum/index.html",
+    "static/css/main.d0285310.chunk.css.map": "/colosseum/static/css/main.d0285310.chunk.css.map",
+    "static/js/2.2ca6d39d.chunk.js.LICENSE.txt": "/colosseum/static/js/2.2ca6d39d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.7d065cf3.js",
+    "static/js/runtime-main.fe8c845d.js",
     "static/js/2.2ca6d39d.chunk.js",
     "static/css/main.d0285310.chunk.css",
     "static/js/main.26d37679.chunk.js"
