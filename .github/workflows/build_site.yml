@@ -31,10 +31,10 @@ jobs:
         run: yarn install
       
       - name: Build
-        run: yarn build
+        run: npm run deploy
         
       - name: move site to site repo
-        run: mv build ../docs
+        run: rm -rf ../docs && mv build ../docs
         
       - name: Commit and push if it changed
         run: |-
