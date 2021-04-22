@@ -142,4 +142,13 @@ Things that we have learned along the way that may help with your build.
   <li> Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
 </ul>
 
+## Safety Considerations
+Please review the license before using/developing/distribution colosseum. 
+
+The colosseum fraction collector uses 3D printed PLA plastic and standard off the shelf components which do not pose a health hazard if handled correctly. Improper handling of plastics however can create hazards when working with organic solvents.
+
+Before using the colosseum fraction collector in a wetlab environment, please ensure that you have thoroughly tested its functionality for your use case in a dry lab. Once the colosseum fraction collector has been moved into a wetlab, it should not be moved back to a drylab or dry workbench.
+
+If you plan to build on the colosseum fraction collector, ensure that you communicate any safety concerns that you may have with your design to potential users and collaborators.
+
 ## If you want to contribute to colosseum, feel free to write on the Discussions page on this repo!
