@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/colosseum/static/css/main.d0285310.chunk.css",
-    "main.js": "/colosseum/static/js/main.ad29b19c.chunk.js",
-    "main.js.map": "/colosseum/static/js/main.ad29b19c.chunk.js.map",
+    "main.js": "/colosseum/static/js/main.5556a81a.chunk.js",
+    "main.js.map": "/colosseum/static/js/main.5556a81a.chunk.js.map",
     "runtime-main.js": "/colosseum/static/js/runtime-main.fe8c845d.js",
     "runtime-main.js.map": "/colosseum/static/js/runtime-main.fe8c845d.js.map",
     "static/js/2.7279255b.chunk.js": "/colosseum/static/js/2.7279255b.chunk.js",
@@ -10,6 +10,8 @@
     "static/js/3.c66a42cd.chunk.js": "/colosseum/static/js/3.c66a42cd.chunk.js",
     "static/js/3.c66a42cd.chunk.js.map": "/colosseum/static/js/3.c66a42cd.chunk.js.map",
     "index.html": "/colosseum/index.html",
+    "service-worker.js": "/colosseum/service-worker.js",
+    "service-worker.js.map": "/colosseum/service-worker.js.map",
     "static/css/main.d0285310.chunk.css.map": "/colosseum/static/css/main.d0285310.chunk.css.map",
     "static/js/2.7279255b.chunk.js.LICENSE.txt": "/colosseum/static/js/2.7279255b.chunk.js.LICENSE.txt"
   },
@@ -17,6 +19,6 @@
     "static/js/runtime-main.fe8c845d.js",
     "static/js/2.7279255b.chunk.js",
     "static/css/main.d0285310.chunk.css",
-    "static/js/main.ad29b19c.chunk.js"
+    "static/js/main.5556a81a.chunk.js"
   ]
 }
