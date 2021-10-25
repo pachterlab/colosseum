@@ -6,7 +6,7 @@ import { promiseTimeout, sleep } from './utils';
 
 // Options for the serial connection.
 const serialOptions = {
-  baudRate: 115200,
+  baudRate: 2000000,
   dataBits: 8,
   stopBits: 1,
   parity: 'none',
