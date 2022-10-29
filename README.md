@@ -9,7 +9,7 @@
 </p>
 
 ## Tl;dr
-We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for less than $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
+We present colosseum, a low-cost, modular, and automated fluid sampling device for scalable microfluidic applications. The colosseum fraction collector can be built for around $100 using off-the-shelf components, and can be assembled in less than an hour. It uses 3D printed parts and common components that can be easily purchased from many retailers. The device can be run from a Windows, Mac, Linux, or Raspberry Pi computer with an easy-to-use GUI.
 
 <p align="center">
   <img src="HARDWARE/colosseum_movie.gif">
@@ -29,14 +29,14 @@ We present colosseum, a low-cost, modular, and automated fluid sampling device f
   <li>Computer Aided Design (CAD) files of the 3D printed components.</li>
   <li>Controller software (Python) and a graphical user interface (GUI) to control the motor.</li>
   <li>Arduino firmware to send commands to the motors and receive commands from the GUI.</li>
-  <li>Bill of materials for sourcing and purchasing materials.</li>
+  <li>Bill of materials for sourcing and purchasing materials (up to date as of 10/28/2022).</li>
   <li>Detailed assembly instructions of hardware components.</li>
   <li>Single click executable files for Mac, Windows, Linux, and Raspberry Pi systems.</li>
 </ul>
 
 ## Getting Started
 __What do I need to buy?__
-The bill of materials with prices and vendor links is available on a [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1Z83jh0TSUGW6AqqXLzAsNthaGQMtfY0oZQ2VZEOLgi0/edit?usp=sharing).
+The bill of materials with prices and vendor links is available on a [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1GIEj9inR2iLPjJAIjU8kLb73kE2cRr2A/edit?usp=sharing&ouid=103028993012652280196&rtpof=true&sd=true).
 
 __What do I need to make?__
 The 3D printed components can be fabricated on any desktop fused filament fabrication (FFF) 3D printer. They were designed using Autodesk Fusion 360, a proprietary CAD software that offers free academic licenses. STL, STEP, IGES, Fusion 360 archive files, and bill of materials are available in the HARDWARE/ folder. They can be used with any slicing software to generate GCode for 3D printing. Here is a [Fusion 360 view](https://a360.co/3r0DND4) of colosseum:
@@ -143,7 +143,7 @@ Things that we have learned along the way that may help with your build.
 </ul>
 
 ## Safety Considerations
-Please review the license before using/developing/distribution colosseum. 
+Please review the license before using/developing/distribution colosseum.
 
 The colosseum fraction collector uses 3D printed PLA plastic and standard off the shelf components which do not pose a health hazard if handled correctly. Improper handling of plastics however can create hazards when working with organic solvents.
 
