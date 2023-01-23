@@ -19,20 +19,18 @@ We present colosseum, a low-cost, modular, and automated fluid sampling device f
 1. [What's included?](#whats-included)
 2. [Getting Started](#getting-started)
 3. [Setting up the hardware](#setting-up-the-hardware)
-6. [Installing software](#installing-software)
-7. [Startup checklist](#startup-checklist)
-8. [Tips/Hints](#tipshints)
-
+4. [Installing software](#installing-software)
+5. [Startup checklist](#startup-checklist)
+6. [Tips/Hints](#tipshints)
 
 ## What's included?
-<ul>
-  <li>Computer Aided Design (CAD) files of the 3D printed components.</li>
-  <li>Controller software (Python) and a graphical user interface (GUI) to control the motor.</li>
-  <li>Arduino firmware to send commands to the motors and receive commands from the GUI.</li>
-  <li>Bill of materials for sourcing and purchasing materials (up to date as of 10/28/2022).</li>
-  <li>Detailed assembly instructions of hardware components.</li>
-  <li>Single click executable files for Mac, Windows, Linux, and Raspberry Pi systems.</li>
-</ul>
+* Computer Aided Design (CAD) files of the 3D printed components.
+* Controller software (Python) and a graphical user interface (GUI) to control the motor.
+* Arduino firmware to send commands to the motors and receive commands from the GUI.
+* Bill of materials for sourcing and purchasing materials (up to date as of 1/23/2023).
+* Detailed assembly instructions of hardware components.
+* Single click executable files for Mac, Windows, Linux, and Raspberry Pi systems.
+* A web-based GUI you can run from Chrome without the need to install any Python packages.
 
 ## Getting Started
 __What do I need to buy?__
@@ -43,21 +41,17 @@ The 3D printed components can be fabricated on any desktop fused filament fabric
 
 ## Setting up the hardware
 We have four 3D printed parts for colosseum, which are:
-<ul>
-  <li> tube rack
-  <li> base
-  <li> base plate (support needed)
-  <li> dispenser arm (support needed)
-</ul>
+* tube rack
+* base
+* base plate (support needed)
+* dispenser arm (support needed)
 
 The print parameter for these parts are as follows:
-<ul>
-  <li> 1.75 mm diameter PLA filament
-  <li> nozzle temperature: 215°C
-  <li> bed temperature of 60°C
-  <li> 10% infill
-  <li> 0.2 mm layer height for slicing
-</ul>
+* 1.75 mm diameter PLA filament
+* nozzle temperature: 215°C
+* bed temperature of 60°C
+* 10% infill
+* 0.2 mm layer height for slicing
 
 ### Building colosseum
 [This video](https://youtu.be/yG7ECh5GO0o) will guide you through the building process of colosseum.
@@ -92,7 +86,7 @@ The fraction collector is driven by an Arduino board that interprets commands se
 We recommend that you wrap wires in [cable wraps](https://www.amazon.com/dp/B07FW3GTXB/ref=cm_sw_r_tw_dp_fq83Fb2VRK9QQ?_x_encoding=UTF8&psc=1) and placing your Arduino+CNC shield in a case like [this](https://www.thingiverse.com/thing:3125495).
 
 ## Installing software
-You can run colosseum on a web-browser by going to this link: https://pachterlab.github.io/colosseum/. Running colosseum on the browser platform will not require you to install any software.
+You can run colosseum on Chrome by going to this link: https://pachterlab.github.io/colosseum/. Running colosseum on the browser platform will not require you to install any software.
 
 To run colosseum locally, you can find the GUI script in the `SOFTWARE/` folder. This GUI is used to interface with a Python script that controls the Arduino via USB.
 
@@ -125,22 +119,18 @@ sudo apt install libxcb-xinerama0
 
 ## Startup Checklist
 Before starting the Python controller, make sure
-<ul>
-  <li> The Arduino has the firmware uploaded to it
-  <li> The Arduino is connected via USB to the computer
-  <li> You have appropriately placed jumpers on the CNC Shield to allow for microstepping and hardware enabling (discussed in build video).
-  <li> The CNC shield is powered, and that all motors are plugged in to the CNC shield
-  <li> The dispenser arm is above the center of the first tube.
-</ul>
+* The Arduino has the firmware uploaded to it
+* The Arduino is connected via USB to the computer
+* You have appropriately placed jumpers on the CNC Shield to allow for microstepping and hardware enabling (discussed in build video).
+* The CNC shield is powered, and that all motors are plugged in to the CNC shield
+* The dispenser arm is above the center of the first tube.
 
 ## Tips/Hints
 Things that we have learned along the way that may help with your build.
-<ul>
-  <li> The first tube can be used as a drip tube to catch any drips before you actually start collecting fractions. It will be numbered 0 on the GUI.
-  <li> If you hear a scratching noise while you rotate the tube rack, it means that the torsion spring on the arm is scratching the bottom of the tube rack so fold that end of the spring.
-  <li> If the dispenser arm does not rotate with the tube rack, it means that the follower on the arm is not correctly touching the grooves of the tube rack.
-  <li> Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
-</ul>
+* The first tube can be used as a drip tube to catch any drips before you actually start collecting fractions. It will be numbered 0 on the GUI.
+* If you hear a scratching noise while you rotate the tube rack, it means that the torsion spring on the arm is scratching the bottom of the tube rack so fold that end of the spring.
+* If the dispenser arm does not rotate with the tube rack, it means that the follower on the arm is not correctly touching the grooves of the tube rack.
+* Make sure to pull the motor away from the rotary shaft as much as possible so that the pulley belt is taut.
 
 ## Safety Considerations
 Please review the license before using/developing/distribution colosseum.
